@@ -1,0 +1,14 @@
+url="http://localhost:8080"
+
+curl -X POST $url/products \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Laptop",
+    "price": 999.99,
+    "description": "High-performance gaming laptop",
+    "category": "Electronics"
+  }' | jq .
+
+sleep 5
+
+curl -X GET $url/products\?page\=1\&limit\=10\&category\=Electronics | jq .
