@@ -1,0 +1,64 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demoapp-producer
+  labels:
+    app: demoapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demoapp
+      role: producer
+  template:
+    metadata:
+      labels:
+        app: demoapp
+        role: producer
+    spec:
+      containers:
+      - name: producer
+        image: kng1259/kmgm-producer:latest
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: secret-volume
+          readOnly: true
+          mountPath: /app/config
+      volumes:
+      - name: secret-volume
+        secret:
+          secretName: demoapp-secret
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demoapp-consumer
+  labels:
+    app: demoapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demoapp
+      role: consumer
+  template:
+    metadata:
+      labels:
+        app: demoapp
+        role: consumer
+    spec:
+      containers:
+      - name: consumer
+        image: kng1259/kmgm-consumer:latest
+        ports:
+        - containerPort: 9080
+        volumeMounts:
+        - name: secret-volume
+          readOnly: true
+          mountPath: /app/config
+      volumes:
+      - name: secret-volume
+        secret:
+          secretName: demoapp-secret

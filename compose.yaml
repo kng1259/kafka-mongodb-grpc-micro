@@ -16,6 +16,8 @@ services:
     restart: unless-stopped
     networks:
       - main
+    volumes:
+      - ./config.yaml:/config.yaml
   
   consumer: 
     build:
@@ -33,6 +35,8 @@ services:
     restart: unless-stopped
     networks:
       - main
+    volumes:
+      - ./config.yaml:/config.yaml
 
   kafka:
     image: confluentinc/cp-kafka:latest

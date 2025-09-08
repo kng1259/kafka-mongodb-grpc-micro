@@ -14,8 +14,8 @@ COPY --from=builder /app/consumer .
 COPY --from=builder /app/protogen ./protogen
 
 # FOR QUICKTESTING PURPOSES ONLY, REMOVE IN PRODUCTION
-COPY --from=builder /app/config.yaml .
+# COPY --from=builder /app/config.yaml .
 
 EXPOSE 9080
 
-ENTRYPOINT ["./consumer"]
+ENTRYPOINT ["/app/consumer"]

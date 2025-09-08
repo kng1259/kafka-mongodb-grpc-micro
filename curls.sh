@@ -1,4 +1,4 @@
-url="http://localhost:8080"
+url="http://poc4k-tsnode1b.ovng.dev.myovcloud.com"
 
 curl -X POST $url/products \
   -H "Content-Type: application/json" \
@@ -7,7 +7,7 @@ curl -X POST $url/products \
     "price": 999.99,
     "description": "High-performance gaming laptop",
     "category": "Electronics"
-  }' | jq .
+  }'
 
 sleep 5
 
