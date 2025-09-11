@@ -1,42 +1,42 @@
 services:
 
-  producer:
-    build:
-      context: ./producer
-    container_name: producer
-    ports:
-      - "8080:8080"
-    depends_on:
-      kafka:
-        condition: service_healthy
-        restart: true
-      consumer:
-        condition: service_started
-        restart: true
-    restart: unless-stopped
-    networks:
-      - main
-    volumes:
-      - ./config.yaml:/config.yaml
+  # producer:
+  #   build:
+  #     context: ./producer
+  #   container_name: producer
+  #   ports:
+  #     - "8080:8080"
+  #   depends_on:
+  #     kafka:
+  #       condition: service_healthy
+  #       restart: true
+  #     consumer:
+  #       condition: service_started
+  #       restart: true
+  #   restart: unless-stopped
+  #   networks:
+  #     - main
+  #   volumes:
+  #     - ./config.yaml:/config.yaml
   
-  consumer: 
-    build:
-      context: ./consumer
-    container_name: consumer
-    ports:
-      - "9080:9080"
-    depends_on:
-      kafka: 
-        condition: service_healthy
-        restart: true
-      mongodb:
-        condition: service_healthy
-        restart: true
-    restart: unless-stopped
-    networks:
-      - main
-    volumes:
-      - ./config.yaml:/config.yaml
+  # consumer: 
+  #   build:
+  #     context: ./consumer
+  #   container_name: consumer
+  #   ports:
+  #     - "9080:9080"
+  #   depends_on:
+  #     kafka: 
+  #       condition: service_healthy
+  #       restart: true
+  #     mongodb:
+  #       condition: service_healthy
+  #       restart: true
+  #   restart: unless-stopped
+  #   networks:
+  #     - main
+  #   volumes:
+  #     - ./config.yaml:/config.yaml
 
   kafka:
     image: confluentinc/cp-kafka:latest
@@ -49,7 +49,7 @@ services:
       - KAFKA_PROCESS_ROLES=controller,broker
       - KAFKA_CONTROLLER_QUORUM_VOTERS=1@kafka:9093
       - KAFKA_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,EXTERNAL://localhost:9092
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
       - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
       - KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER
       - KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT

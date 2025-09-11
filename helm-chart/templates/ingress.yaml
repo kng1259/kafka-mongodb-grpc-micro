@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-producer-ingress
+  labels:
+    {{ include "common.labels.standard" . | nindent 4 }}
+    role: producer
+  annotations:
+    cert-manager.io/cluster-issuer: selfsigned-cluster-issuer
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - path: /products
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-producer-service
+                port:
+                  number: 8080
+  tls:
+    - hosts:
+        - poc4k-tsnode1b.ovng.dev.myovcloud.com
+        - poc4k-tsnode2b.ovng.dev.myovcloud.com
+        - poc4k-tsnode3b.ovng.dev.myovcloud.com
+      secretName: demoapp-tls

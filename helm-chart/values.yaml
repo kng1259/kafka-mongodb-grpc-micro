@@ -1,0 +1,113 @@
+global:
+  defaultStorageClass: "longhorn-agent-only"
+
+app:
+  replicaCount: 1
+
+kafka:
+  listeners:
+    client:
+      containerPort: 9092
+      protocol: SASL_PLAINTEXT
+      name: CLIENT
+    controller:
+      name: CONTROLLER
+      containerPort: 9093
+      protocol: SASL_PLAINTEXT
+    interbroker:
+      containerPort: 9094
+      protocol: SASL_PLAINTEXT
+      name: INTERNAL
+  sasl:
+    client:
+      users: ["usera"]
+      passwords: ["passb"]
+
+  controller:
+    replicaCount: 3
+    persistence:
+      enabled: true
+      accessModes: [ ReadWriteOncePod ]
+      size: 4Gi
+  broker:
+    replicaCount: 0
+    persistence:
+      enabled: true
+      accessModes: [ ReadWriteOncePod ]
+      size: 4Gi
+
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: agent
+            operator: In
+            values:
+            - "true"
+
+mongodb:
+  architecture: "replicaset"
+  resourcesPreset: "medium"
+  replicaCount: 3
+
+  auth:
+    enabled: true
+    rootUser: "root"
+    rootPassword: "toor"
+    usernames: ["usera"]
+    passwords: ["passb"]
+    databases: ["productdb"]
+
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: agent
+            operator: In
+            values:
+            - "true"
+
+  persistence:
+    enabled: true
+    accessModes: [ ReadWriteOncePod ]
+    size: 4Gi
+  passwordUpdateJob:
+    enabled: true
+  backup:
+    enabled: false
+  tls:
+    enabled: false
+  arbiter:
+    enabled: false
+  metrics:
+    enabled: false
+
+# image:
+#   repository: nginx
+#   pullPolicy: IfNotPresent
+#   tag: ""
+
+# imagePullSecrets: []
+
+# podAnnotations: {}
+# podLabels: {}
+
+# podSecurityContext: {}
+# securityContext: {}
+
+# resources: {}
+
+# livenessProbe:
+#   httpGet:
+#     path: /
+#     port: http
+# readinessProbe:
+#   httpGet:
+#     path: /
+#     port: http
+
+# tolerations: []
+
+# affinity: {}

@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/segmentio/kafka-go"
+	"github.com/segmentio/kafka-go/sasl/plain"
 )
 
 type Producer struct {
@@ -12,12 +13,21 @@ type Producer struct {
 	topic  string
 }
 
-func NewProducer(brokers []string, topic string) (*Producer, error) {
+func NewProducer(brokers []string, username string, password string, topic string) (*Producer, error) {
+	mechanism := plain.Mechanism{
+		Username: username,
+		Password: password,
+	}
+	sharedTransport := &kafka.Transport{
+		SASL: mechanism,
+	}
+
 	writer := &kafka.Writer{
 		Addr:                   kafka.TCP(brokers...),
 		Topic:                  topic,
 		Balancer:               &kafka.LeastBytes{},
 		AllowAutoTopicCreation: true,
+		Transport:              sharedTransport,
 	}
 
 	return &Producer{

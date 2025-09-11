@@ -2,11 +2,11 @@
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
-  name: "demoapp-producer-rules"
+  name: {{ .Release.Name }}-producer-rules
 spec:
   endpointSelector:
     matchLabels:
-      app: demoapp
+      {{ include "common.labels.matchLabels" . | nindent 6 }}
       role: producer
   ingress:
     - toPorts:
@@ -34,15 +34,22 @@ spec:
               protocol: ANY
     - toEndpoints:
       - matchLabels:
-          app: demoapp
+          {{ include "common.labels.matchLabels" . | nindent 10 }}
           role: consumer
       toPorts:
         - ports:
           - port: "9080"
             protocol: TCP
+          rules:
+            http:
+              - method: POST
+                path: /proto.ProductService/GetProducts 
+              - method: POST
+                path: /proto.ProductService/GetProductByID
     - toEndpoints:
       - matchLabels:
           app.kubernetes.io/name: kafka
+          app.kubernetes.io/instance: {{ .Release.Name }}
       toPorts:
         - ports:
           - port: "9092"
@@ -57,16 +64,16 @@ spec:
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
-  name: "demoapp-consumer-rules"
+  name: {{ .Release.Name }}-consumer-rules
 spec:
   endpointSelector:
     matchLabels:
-      app: demoapp
+      {{ include "common.labels.matchLabels" . | nindent 6 }}
       role: consumer
   ingress:
     - fromEndpoints:
       - matchLabels:
-          app: demoapp
+          {{ include "common.labels.matchLabels" . | nindent 10 }}
           role: producer
       toPorts:
         - ports:
@@ -81,8 +88,8 @@ spec:
   egress:
     - toEndpoints:
       - matchLabels:
-          app: demoapp
-          role: database
+          app.kubernetes.io/name: mongodb
+          app.kubernetes.io/instance: {{ .Release.Name }}
       toPorts:
         - ports:
           - port: "27017"
@@ -98,6 +105,7 @@ spec:
     - toEndpoints:
       - matchLabels:
           app.kubernetes.io/name: kafka
+          app.kubernetes.io/instance: {{ .Release.Name }}
       toPorts:
         - ports:
           - port: "9092"

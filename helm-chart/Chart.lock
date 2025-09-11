@@ -1,0 +1,12 @@
+dependencies:
+- name: common
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 2.31.4
+- name: kafka
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 32.4.3
+- name: mongodb
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 16.5.45
+digest: sha256:a4a01966949f4934fd5ab85d03fae4fa8546e333ed671f872e599d76082b5adc
+generated: "2025-09-11T03:23:05.279585386Z"

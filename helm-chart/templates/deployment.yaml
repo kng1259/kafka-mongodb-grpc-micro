@@ -1,0 +1,66 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-producer
+  labels:
+    {{- include "common.labels.standard" . | nindent 4 }}
+    role: producer
+spec:
+  replicas: {{ .Values.app.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "common.labels.matchLabels" . | nindent 6 }}
+      role: producer
+  template:
+    metadata:
+      labels:
+        {{- include "common.labels.standard" . | nindent 8 }}
+        role: producer
+    spec:
+      containers:
+      - name: producer
+        image: kng1259/kmgm-producer:latest
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: secret-volume
+          readOnly: true
+          mountPath: /app/config
+      volumes:
+      - name: secret-volume
+        secret:
+          secretName: {{ .Release.Name }}-secret
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-consumer
+  labels:
+    {{- include "common.labels.standard" . | nindent 4 }}
+    role: consumer
+spec:
+  replicas: {{ .Values.app.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "common.labels.matchLabels" . | nindent 6 }}
+      role: consumer
+  template:
+    metadata:
+      labels:
+        {{- include "common.labels.standard" . | nindent 8 }}
+        role: consumer
+    spec:
+      containers:
+      - name: consumer
+        image: kng1259/kmgm-consumer:latest
+        ports:
+        - containerPort: 9080
+        volumeMounts:
+        - name: secret-volume
+          readOnly: true
+          mountPath: /app/config
+      volumes:
+      - name: secret-volume
+        secret:
+          secretName: {{ .Release.Name }}-secret

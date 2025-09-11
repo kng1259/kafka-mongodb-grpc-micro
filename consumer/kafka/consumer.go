@@ -4,23 +4,36 @@ import (
 	"context"
 	"encoding/json"
 	"log"
+	"time"
 
 	"kmgm-consumer/models"
 
 	"github.com/segmentio/kafka-go"
+	"github.com/segmentio/kafka-go/sasl/plain"
 )
 
 type Consumer struct {
 	reader *kafka.Reader
 }
 
-func NewConsumer(brokers []string, topic, groupID string) *Consumer {
+func NewConsumer(brokers []string, topic, username string, password string, groupID string) *Consumer {
+	mechanism := plain.Mechanism{
+		Username: username,
+		Password: password,
+	}
+	dialer := &kafka.Dialer{
+		Timeout:       10 * time.Second,
+		DualStack:     false,
+		SASLMechanism: mechanism,
+	}
+
 	return &Consumer{
 		reader: kafka.NewReader(kafka.ReaderConfig{
 			Brokers:  brokers,
 			Topic:    topic,
 			GroupID:  groupID,
 			MaxBytes: 10e6, // 10MB
+			Dialer:   dialer,
 		}),
 	}
 }

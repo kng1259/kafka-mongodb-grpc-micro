@@ -1,0 +1,329 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    charts.bitnami.com/password-last-update: "20250911033511"
+  creationTimestamp: "2025-09-11T03:35:13Z"
+  generateName: demoapp-mongodb-
+  labels:
+    app.kubernetes.io/component: mongodb
+    app.kubernetes.io/instance: demoapp
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: mongodb
+    app.kubernetes.io/version: 8.0.13
+    apps.kubernetes.io/pod-index: "0"
+    controller-revision-hash: demoapp-mongodb-7679dbbcd4
+    helm.sh/chart: mongodb-16.5.45
+    statefulset.kubernetes.io/pod-name: demoapp-mongodb-0
+  name: demoapp-mongodb-0
+  namespace: default
+  ownerReferences:
+  - apiVersion: apps/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: StatefulSet
+    name: demoapp-mongodb
+    uid: 91acf244-ad6a-4dba-a3f7-3848b6e7136f
+  resourceVersion: "772170"
+  uid: 4955c67f-b61a-4384-ae6b-19e11fa486c1
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: agent
+            operator: In
+            values:
+            - "true"
+  automountServiceAccountToken: false
+  containers:
+  - command:
+    - /scripts/setup.sh
+    env:
+    - name: BITNAMI_DEBUG
+      value: "false"
+    - name: MY_POD_NAME
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: metadata.name
+    - name: MY_POD_NAMESPACE
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: metadata.namespace
+    - name: MY_POD_HOST_IP
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: status.hostIP
+    - name: MONGODB_INITIAL_PRIMARY_HOST
+      value: demoapp-mongodb-0.demoapp-mongodb-headless.$(MY_POD_NAMESPACE).svc.cluster.local
+    - name: MONGODB_REPLICA_SET_NAME
+      value: rs0
+    - name: MONGODB_ADVERTISED_HOSTNAME
+      value: $(MY_POD_NAME).demoapp-mongodb-headless.$(MY_POD_NAMESPACE).svc.cluster.local
+    - name: MONGODB_EXTRA_USERNAMES
+      value: usera
+    - name: MONGODB_EXTRA_DATABASES
+      value: productdb
+    - name: MONGODB_EXTRA_PASSWORDS_FILE
+      value: /opt/bitnami/mongodb/secrets/mongodb-passwords
+    - name: MONGODB_ROOT_USER
+      value: root
+    - name: MONGODB_ROOT_PASSWORD_FILE
+      value: /opt/bitnami/mongodb/secrets/mongodb-root-password
+    - name: MONGODB_REPLICA_SET_KEY_FILE
+      value: /opt/bitnami/mongodb/secrets/mongodb-replica-set-key
+    - name: ALLOW_EMPTY_PASSWORD
+      value: "no"
+    - name: MONGODB_SYSTEM_LOG_VERBOSITY
+      value: "0"
+    - name: MONGODB_DISABLE_SYSTEM_LOG
+      value: "no"
+    - name: MONGODB_DISABLE_JAVASCRIPT
+      value: "no"
+    - name: MONGODB_ENABLE_JOURNAL
+      value: "yes"
+    - name: MONGODB_PORT_NUMBER
+      value: "27017"
+    - name: MONGODB_ENABLE_IPV6
+      value: "no"
+    - name: MONGODB_ENABLE_DIRECTORY_PER_DB
+      value: "no"
+    image: docker.io/bitnami/mongodb:8.0.13-debian-12-r0
+    imagePullPolicy: IfNotPresent
+    livenessProbe:
+      exec:
+        command:
+        - /bitnami/scripts/ping-mongodb.sh
+      failureThreshold: 6
+      initialDelaySeconds: 30
+      periodSeconds: 20
+      successThreshold: 1
+      timeoutSeconds: 10
+    name: mongodb
+    ports:
+    - containerPort: 27017
+      name: mongodb
+      protocol: TCP
+    readinessProbe:
+      exec:
+        command:
+        - /bitnami/scripts/readiness-probe.sh
+      failureThreshold: 6
+      initialDelaySeconds: 5
+      periodSeconds: 10
+      successThreshold: 1
+      timeoutSeconds: 5
+    resources:
+      limits:
+        cpu: 750m
+        ephemeral-storage: 2Gi
+        memory: 1536Mi
+      requests:
+        cpu: 500m
+        ephemeral-storage: 50Mi
+        memory: 1Gi
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+      privileged: false
+      readOnlyRootFilesystem: true
+      runAsGroup: 1001
+      runAsNonRoot: true
+      runAsUser: 1001
+      seLinuxOptions: {}
+      seccompProfile:
+        type: RuntimeDefault
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /tmp
+      name: empty-dir
+      subPath: tmp-dir
+    - mountPath: /opt/bitnami/mongodb/conf
+      name: empty-dir
+      subPath: app-conf-dir
+    - mountPath: /opt/bitnami/mongodb/tmp
+      name: empty-dir
+      subPath: app-tmp-dir
+    - mountPath: /opt/bitnami/mongodb/logs
+      name: empty-dir
+      subPath: app-logs-dir
+    - mountPath: /.mongodb
+      name: empty-dir
+      subPath: mongosh-home
+    - mountPath: /opt/bitnami/mongodb/secrets
+      name: mongodb-secrets
+    - mountPath: /bitnami/mongodb
+      name: datadir
+    - mountPath: /bitnami/scripts
+      name: common-scripts
+    - mountPath: /scripts/setup.sh
+      name: scripts
+      subPath: setup.sh
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  hostname: demoapp-mongodb-0
+  initContainers:
+  - args:
+    - -ec
+    - |
+      ln -sf /dev/stdout "/opt/bitnami/mongodb/logs/mongodb.log"
+    command:
+    - /bin/bash
+    image: docker.io/bitnami/mongodb:8.0.13-debian-12-r0
+    imagePullPolicy: IfNotPresent
+    name: log-dir
+    resources:
+      limits:
+        cpu: 750m
+        ephemeral-storage: 2Gi
+        memory: 1536Mi
+      requests:
+        cpu: 500m
+        ephemeral-storage: 50Mi
+        memory: 1Gi
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+      privileged: false
+      readOnlyRootFilesystem: true
+      runAsGroup: 1001
+      runAsNonRoot: true
+      runAsUser: 1001
+      seLinuxOptions: {}
+      seccompProfile:
+        type: RuntimeDefault
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /opt/bitnami/mongodb/logs
+      name: empty-dir
+      subPath: app-logs-dir
+  nodeName: poc4k-tsnode2b.ovng.dev.myovcloud.com
+  preemptionPolicy: PreemptLowerPriority
+  priority: 0
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext:
+    fsGroup: 1001
+    fsGroupChangePolicy: Always
+  serviceAccount: demoapp-mongodb
+  serviceAccountName: demoapp-mongodb
+  subdomain: demoapp-mongodb-headless
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
+  volumes:
+  - name: datadir
+    persistentVolumeClaim:
+      claimName: datadir-demoapp-mongodb-0
+  - emptyDir: {}
+    name: empty-dir
+  - configMap:
+      defaultMode: 360
+      name: demoapp-mongodb-common-scripts
+    name: common-scripts
+  - name: mongodb-secrets
+    secret:
+      defaultMode: 420
+      secretName: demoapp-mongodb
+  - configMap:
+      defaultMode: 493
+      name: demoapp-mongodb-scripts
+    name: scripts
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2025-09-11T03:35:26Z"
+    status: "True"
+    type: PodReadyToStartContainers
+  - lastProbeTime: null
+    lastTransitionTime: "2025-09-11T03:35:26Z"
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: "2025-09-11T03:35:39Z"
+    status: "True"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: "2025-09-11T03:35:39Z"
+    status: "True"
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: "2025-09-11T03:35:13Z"
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: containerd://4641beea274a310eac00c263fa1e6ea23f9319dce5b250ac41356f1fa205d8cc
+    image: docker.io/bitnami/mongodb:8.0.13-debian-12-r0
+    imageID: docker.io/bitnami/mongodb@sha256:2579e968033ec9f97035e91a215a4fb3943eb706eb3871b3d0d1d072e2f45605
+    lastState: {}
+    name: mongodb
+    ready: true
+    restartCount: 0
+    started: true
+    state:
+      running:
+        startedAt: "2025-09-11T03:35:26Z"
+    volumeMounts:
+    - mountPath: /tmp
+      name: empty-dir
+    - mountPath: /opt/bitnami/mongodb/conf
+      name: empty-dir
+    - mountPath: /opt/bitnami/mongodb/tmp
+      name: empty-dir
+    - mountPath: /opt/bitnami/mongodb/logs
+      name: empty-dir
+    - mountPath: /.mongodb
+      name: empty-dir
+    - mountPath: /opt/bitnami/mongodb/secrets
+      name: mongodb-secrets
+    - mountPath: /bitnami/mongodb
+      name: datadir
+    - mountPath: /bitnami/scripts
+      name: common-scripts
+    - mountPath: /scripts/setup.sh
+      name: scripts
+  hostIP: 172.31.13.114
+  hostIPs:
+  - ip: 172.31.13.114
+  initContainerStatuses:
+  - containerID: containerd://c58ff4827aa39b0b577a4483238080ff3faf198df4b8a9058f47f02b79af0031
+    image: docker.io/bitnami/mongodb:8.0.13-debian-12-r0
+    imageID: docker.io/bitnami/mongodb@sha256:2579e968033ec9f97035e91a215a4fb3943eb706eb3871b3d0d1d072e2f45605
+    lastState: {}
+    name: log-dir
+    ready: true
+    restartCount: 0
+    started: false
+    state:
+      terminated:
+        containerID: containerd://c58ff4827aa39b0b577a4483238080ff3faf198df4b8a9058f47f02b79af0031
+        exitCode: 0
+        finishedAt: "2025-09-11T03:35:26Z"
+        reason: Completed
+        startedAt: "2025-09-11T03:35:26Z"
+    volumeMounts:
+    - mountPath: /opt/bitnami/mongodb/logs
+      name: empty-dir
+  phase: Running
+  podIP: 10.42.1.235
+  podIPs:
+  - ip: 10.42.1.235
+  qosClass: Burstable
+  startTime: "2025-09-11T03:35:13Z"

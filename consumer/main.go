@@ -47,7 +47,7 @@ func main() {
 	if cfg.Kafka.Enabled {
 		// Start gRPC server in a goroutine
 		go startGRPCServer(repo, cfg.GRPC.Port)
-		kafkaConsumer := kafka.NewConsumer(cfg.Kafka.Brokers, cfg.Kafka.Topic, cfg.Kafka.GroupID)
+		kafkaConsumer := kafka.NewConsumer(cfg.Kafka.Brokers, cfg.Kafka.Topic, cfg.Kafka.Username, cfg.Kafka.Password, cfg.Kafka.GroupID)
 		defer kafkaConsumer.Close()
 
 		log.Println("Starting consumer...")

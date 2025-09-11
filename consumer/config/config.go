@@ -20,10 +20,12 @@ type ServerConfig struct {
 }
 
 type KafkaConfig struct {
-	Brokers []string
-	Topic   string
-	GroupID string
-	Enabled bool // Add this field
+	Brokers  []string
+	Topic    string
+	GroupID  string
+	Enabled  bool // Add this field
+	Username string
+	Password string
 }
 
 type MongoDBConfig struct {

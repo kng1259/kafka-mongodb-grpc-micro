@@ -1,4 +1,5 @@
 url="http://poc4k-tsnode1b.ovng.dev.myovcloud.com"
+# url="localhost:8080"
 
 curl -X POST $url/products \
   -H "Content-Type: application/json" \
@@ -9,6 +10,6 @@ curl -X POST $url/products \
     "category": "Electronics"
   }'
 
-sleep 5
+# sleep 5
 
-curl -X GET $url/products\?page\=1\&limit\=10\&category\=Electronics | jq .
+# curl -X GET $url/products\?page\=1\&limit\=10\&category\=Electronics
