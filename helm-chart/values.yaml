@@ -5,6 +5,8 @@ app:
   replicaCount: 1
 
 kafka:
+  networkPolicy:
+    enabled: false
   listeners:
     client:
       containerPort: 9092
@@ -49,7 +51,10 @@ kafka:
 mongodb:
   architecture: "replicaset"
   resourcesPreset: "medium"
-  replicaCount: 3
+  replicaCount: 1
+
+  networkPolicy:
+    enabled: false
 
   auth:
     enabled: true
@@ -74,7 +79,7 @@ mongodb:
     accessModes: [ ReadWriteOncePod ]
     size: 4Gi
   passwordUpdateJob:
-    enabled: true
+    enabled: false
   backup:
     enabled: false
   tls:

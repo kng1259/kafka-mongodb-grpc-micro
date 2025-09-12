@@ -5,7 +5,7 @@ curl -X POST $url/products \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Laptop",
-    "price": 999.99,
+    "price": 999,
     "description": "High-performance gaming laptop",
     "category": "Electronics"
   }'

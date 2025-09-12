@@ -9,29 +9,25 @@ spec:
       {{ include "common.labels.matchLabels" . | nindent 6 }}
       role: producer
   ingress:
-    - toPorts:
-        - ports:
-            - port: "8080"
-              protocol: TCP
-          rules: 
-            http:
-            - method: GET
-              path: /products
-            - method: POST
-              path: /products
-      fromEndpoints:
-      - matchLabels:
-          k8s:io.kubernetes.pod.namespace: kube-system
-          app.kubernetes.io/name: rke2-ingress-nginx
+  - fromEndpoints:
+    - matchExpressions:
+      - key: k8s:io.kubernetes.pod.namespace 
+        operator: In
+        values: 
+        - kube-system
+      # - key: reserved:ingress
+      #   operator: Exists
+    toPorts:
+      - ports:
+          - port: "8080"
+            protocol: TCP
+        rules: 
+          http:
+          - method: GET
+            path: /products
+          - method: POST
+            path: /products
   egress:
-    - toEndpoints:
-      - matchLabels:
-          k8s:io.kubernetes.pod.namespace: kube-system
-          k8s-app: kube-dns
-      toPorts:
-        - ports:
-            - port: "53"
-              protocol: ANY
     - toEndpoints:
       - matchLabels:
           {{ include "common.labels.matchLabels" . | nindent 10 }}
@@ -54,11 +50,10 @@ spec:
         - ports:
           - port: "9092"
             protocol: TCP
-          rules:
-            kafka:
-              - apiKey: createtopic
-              - role: produce
-                topic: products
+          # rules:
+          #   kafka:
+          #   - role: produce
+          #     topic: products
 
 ---
 apiVersion: "cilium.io/v2"
@@ -85,23 +80,31 @@ spec:
                 path: /proto.ProductService/GetProducts 
               - method: POST
                 path: /proto.ProductService/GetProductByID
+    - fromEndpoints:
+      - matchLabels:
+          {{ include "common.labels.matchLabels" . | nindent 10 }}
+          role: producer-test
+      toPorts:
+        - ports:
+          - port: "9080"
+            protocol: TCP
+          rules:
+            http:
+              - method: POST
+                path: /proto.ProductService/GetProducts 
+              - method: POST
+                path: /proto.ProductService/GetProductByID
+
   egress:
     - toEndpoints:
       - matchLabels:
           app.kubernetes.io/name: mongodb
+          app.kubernetes.io/component: mongodb
           app.kubernetes.io/instance: {{ .Release.Name }}
       toPorts:
         - ports:
           - port: "27017"
             protocol: TCP
-    - toEndpoints:
-      - matchLabels:
-          k8s:io.kubernetes.pod.namespace: kube-system
-          k8s-app: kube-dns
-      toPorts:
-        - ports:
-            - port: "53"
-              protocol: ANY
     - toEndpoints:
       - matchLabels:
           app.kubernetes.io/name: kafka
@@ -110,8 +113,123 @@ spec:
         - ports:
           - port: "9092"
             protocol: TCP
-          rules:
-            kafka:
-              - role: consume
-                topic: products
-              - apiKey: "listoffsets"
+          # rules:
+          #   kafka:
+          #     - role: consume
+          #       topic: products
+            
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: {{ .Release.Name }}-kafka-controller-rules
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: kafka
+      app.kubernetes.io/component: controller-eligible
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  ingress:
+    - fromEndpoints:
+      - matchExpressions:
+        - key: app.kubernetes.io/name
+          operator: In
+          values:
+          - {{ .Chart.Name }}
+        - key: app.kubernetes.io/instance
+          operator: In
+          values:
+          - {{ .Release.Name }}
+        - key: role
+          operator: In
+          values:
+          - consumer
+          - producer
+          - producer-test
+      toPorts:
+        - ports:
+          - port: "9092"
+            protocol: TCP
+          # rules:
+          #   kafka:
+          #     - role: produce
+          #       topic: products
+          #     - apiKey: createtopic
+    # - fromEndpoints:
+    #   - matchLabels:
+    #       role: consumer
+    #   toPorts:
+    #     - ports:
+    #       - port: "9092"
+    #         protocol: TCP
+    #       # rules:
+    #       #   kafka:
+    #       #     - apiKey: "listoffsets"
+    #       #     - role: consume
+    #       #       topic: products
+    - fromEndpoints:
+      - matchLabels:
+          app.kubernetes.io/name: kafka
+          app.kubernetes.io/instance: {{ .Release.Name }}
+      toPorts:
+        - ports:
+            - port: "9092"
+              protocol: ANY
+            - port: "9093"
+              protocol: ANY
+            - port: "9094"
+              protocol: ANY
+  egress:
+    - toEndpoints:
+      - matchLabels:
+          app.kubernetes.io/name: kafka
+          app.kubernetes.io/instance: {{ .Release.Name }}
+      toPorts:
+        - ports:
+            - port: "9092"
+              protocol: ANY
+            - port: "9093"
+              protocol: ANY
+            - port: "9094"
+              protocol: ANY
+
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: {{ .Release.Name }}-mongodb-rules
+spec:
+  endpointSelector:
+    matchLabels:
+      name: mongodb
+      component: mongodb
+      instance: {{ .Release.Name }}
+  ingress:
+    - fromEndpoints:
+      - matchLabels:
+          name: {{ .Chart.Name }}
+          instance: {{ .Release.Name }}
+          role: consumer
+      toPorts:
+        - ports:
+          - port: "27017"
+            protocol: TCP
+    - fromEndpoints:
+      - matchLabels:
+          name: mongodb
+          instance: {{ .Release.Name }}
+      toPorts:
+        - ports:
+            - port: "27017"
+              protocol: TCP
+  egress:
+    - toEndpoints:
+      - matchLabels:
+          name: mongodb
+          instance: {{ .Release.Name }}
+      toPorts:
+        - ports:
+            - port: "27017"
+              protocol: TCP
+    - toEntities:
+      - kube-apiserver

@@ -31,6 +31,7 @@ spec:
       - name: secret-volume
         secret:
           secretName: {{ .Release.Name }}-secret
+
 ---
 apiVersion: apps/v1
 kind: Deployment

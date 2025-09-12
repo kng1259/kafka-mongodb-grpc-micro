@@ -16,7 +16,8 @@ type Config struct {
 }
 
 type ServerConfig struct {
-	Port int
+	Port  int
+	Route string
 }
 
 type KafkaConfig struct {
@@ -48,6 +49,7 @@ func LoadConfig() *Config {
 
 	// Set default values
 	viper.SetDefault("server.port", 8080)
+	viper.SetDefault("server.route", "products")
 	viper.SetDefault("kafka.topic", "products")
 	viper.SetDefault("kafka.groupid", "product-consumer-group")
 	viper.SetDefault("kafka.enabled", true) // Default to enabled

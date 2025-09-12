@@ -20,19 +20,9 @@ func main() {
 	// Load configuration
 	cfg := config.LoadConfig()
 
-	// Initialize gRPC client
-	grpcClient, err := grpcClient.NewClient(
-		cfg.GRPC.Host,
-		cfg.GRPC.Port,
-		cfg.GRPC.Timeout,
-	)
-	if err != nil {
-		log.Fatalf("Failed to connect to gRPC server: %v", err)
-	}
-	defer grpcClient.Close()
-
 	// Initialize Kafka producer
 	var kafkaProducer *kafka.Producer
+	var err error
 	if cfg.Kafka.Enabled {
 		kafkaProducer, err = kafka.NewProducer(cfg.Kafka.Brokers, cfg.Kafka.Username, cfg.Kafka.Password, cfg.Kafka.Topic)
 		if err != nil {
@@ -51,7 +41,7 @@ func main() {
 
 	// Product creation endpoint
 	if cfg.Kafka.Enabled {
-		r.POST("/products", func(c *gin.Context) {
+		r.POST("/"+cfg.Server.Route, func(c *gin.Context) {
 			var product models.Product
 			if err := c.ShouldBindJSON(&product); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -83,8 +73,19 @@ func main() {
 		})
 	}
 
+	// Initialize gRPC client
+	grpcClient, err := grpcClient.NewClient(
+		cfg.GRPC.Host,
+		cfg.GRPC.Port,
+		cfg.GRPC.Timeout,
+	)
+	if err != nil {
+		log.Printf("Failed to connect to gRPC server: %v", err)
+	}
+	defer grpcClient.Close()
+
 	// Get products endpoint (uses gRPC to consumer)
-	r.GET("/products", func(c *gin.Context) {
+	r.GET("/"+cfg.Server.Route, func(c *gin.Context) {
 		page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 		limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
 		category := c.Query("category")
@@ -104,7 +105,7 @@ func main() {
 	})
 
 	// Get product by ID endpoint
-	r.GET("/products/:id", func(c *gin.Context) {
+	r.GET("/"+cfg.Server.Route+"/:id", func(c *gin.Context) {
 		id := c.Param("id")
 
 		response, err := grpcClient.GetProductByID(id)

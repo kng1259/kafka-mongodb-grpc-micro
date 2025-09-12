@@ -24,4 +24,4 @@ spec:
         - poc4k-tsnode1b.ovng.dev.myovcloud.com
         - poc4k-tsnode2b.ovng.dev.myovcloud.com
         - poc4k-tsnode3b.ovng.dev.myovcloud.com
-      secretName: demoapp-tls
+      secretName: {{ .Release.Name }}-tls
