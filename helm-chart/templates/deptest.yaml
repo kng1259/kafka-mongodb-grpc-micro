@@ -9,7 +9,7 @@ stringData:
   config.yaml: |-
     server:
       port: 8080
-      route: products-test
+      route: products-test/
     kafka:
       enabled: true
       brokers:
@@ -109,13 +109,13 @@ metadata:
     {{ include "common.labels.standard" . | nindent 4 }}
     role: producer-test
   annotations:
-    cert-manager.io/cluster-issuer: selfsigned-cluster-issuer
+    cert-manager.io/cluster-issuer: {{ .Release.Name }}-selfsigned-ci
 spec:
   ingressClassName: nginx
   rules:
     - http:
         paths:
-          - path: /products
+          - path: /products-test/
             pathType: Prefix
             backend:
               service:

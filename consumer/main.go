@@ -25,7 +25,7 @@ func main() {
 	// Connect to MongoDB
 	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI(cfg.MongoDB.URI))
 	if err != nil {
-		log.Fatalf("Failed to connect to MongoDB: %v", err)
+		log.Printf("Failed to connect to MongoDB: %v", err)
 	}
 	defer client.Disconnect(context.Background())
 
@@ -34,7 +34,7 @@ func main() {
 	defer cancel()
 	err = client.Ping(ctx, nil)
 	if err != nil {
-		log.Fatalf("Failed to ping MongoDB: %v", err)
+		log.Printf("Failed to ping MongoDB: %v", err)
 	}
 
 	log.Println("Connected to MongoDB")
@@ -56,7 +56,7 @@ func main() {
 			return repo.StoreProduct(context.Background(), p)
 		})
 		if err != nil {
-			log.Fatalf("Error in consumer: %v", err)
+			log.Printf("Error in consumer: %v", err)
 		}
 	} else {
 		// Start gRPC server

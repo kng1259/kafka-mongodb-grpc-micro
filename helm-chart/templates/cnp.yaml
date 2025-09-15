@@ -24,7 +24,7 @@ spec:
         rules: 
           http:
           - method: GET
-            path: /products
+            path: /products/
           - method: POST
             path: /products
   egress:
@@ -70,20 +70,6 @@ spec:
       - matchLabels:
           {{ include "common.labels.matchLabels" . | nindent 10 }}
           role: producer
-      toPorts:
-        - ports:
-          - port: "9080"
-            protocol: TCP
-          rules:
-            http:
-              - method: POST
-                path: /proto.ProductService/GetProducts 
-              - method: POST
-                path: /proto.ProductService/GetProductByID
-    - fromEndpoints:
-      - matchLabels:
-          {{ include "common.labels.matchLabels" . | nindent 10 }}
-          role: producer-test
       toPorts:
         - ports:
           - port: "9080"

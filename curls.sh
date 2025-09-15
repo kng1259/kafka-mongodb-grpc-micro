@@ -1,7 +1,6 @@
 url="http://poc4k-tsnode1b.ovng.dev.myovcloud.com"
-# url="localhost:8080"
 
-curl -X POST $url/products \
+curl -X POST http://poc4k-tsnode1b.ovng.dev.myovcloud.com/products \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Laptop",
