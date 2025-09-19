@@ -1,0 +1,49 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  annotations:
+    helmcharts.cattle.io/managed-by: helm-controller
+  finalizers:
+    - wrangler.cattle.io/on-helm-chart-remove
+  name: grafana-install
+  namespace: default
+spec:
+  version: v9.4.5
+  chart: grafana
+  repo: https://grafana.github.io/helm-charts
+  failurePolicy: abort
+  targetNamespace: monitoring
+  createNamespace: true
+  valuesContent: |-
+    sidecar:
+      dashboards:
+        enabled: true
+        label: grafana_dashboard
+        labelValue: "1"
+        searchNamespace: ALL
+
+    adminUser: admin
+    adminPassword: admin
+
+    grafana.ini:
+      server:
+        domain: poc4k-tsnode1b.ovng.dev.myovcloud.com/grafana/
+        root_url: http://poc4k-tsnode1b.ovng.dev.myovcloud.com/grafana/
+        serve_from_sub_path: true
+    ingress:
+      enabled: true
+      ingressClassName: nginx
+      annotations:
+      path: /grafana/
+      pathType: Prefix
+      hosts:
+        - poc4k-tsnode1b.ovng.dev.myovcloud.com
+        - poc4k-tsnode2b.ovng.dev.myovcloud.com
+        - poc4k-tsnode3b.ovng.dev.myovcloud.com
+
+    persistence:
+      enabled: true
+      storageClassName: longhorn-agent-only
+      accessModes:
+      - ReadWriteOnce
+      size: 3Gi

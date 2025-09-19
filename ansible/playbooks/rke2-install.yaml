@@ -5,6 +5,14 @@
   become_user: root
   tasks:
 
+  - name: Create directory
+    ansible.builtin.file:
+      path: /etc/rancher/rke2
+      state: directory
+      mode: '0644'
+      owner: "{{ ansible_user_id }}"
+      group: "{{ ansible_user_gid }}"
+    
   - name: Create config.yaml
     ansible.builtin.copy:
       src: ../assets/server-config.yaml
@@ -13,10 +21,10 @@
       owner: "{{ ansible_user_id }}"
       group: "{{ ansible_user_gid }}"
 
-  - name: Create rke-cilium-config.yaml
+  - name: Sync manifests
     ansible.builtin.copy:
-      src: ../assets/rke2-cilium-config.yaml
-      dest: /var/lib/rancher/rke2/server/manifests/rke2-cilium-config.yaml
+      src: ../assets/manifests/
+      dest: /var/lib/rancher/rke2/server/manifests/
       mode: '0644'
       owner: "{{ ansible_user_id }}"
       group: "{{ ansible_user_gid }}"
@@ -34,21 +42,34 @@
       flat: yes
 
   - name: Retrieve node-token
-    ansible.builtin.fetch:
+    ansible.builtin.slurp:
       src: /var/lib/rancher/rke2/server/node-token
-    register: node-token
+    register: nodetoken_raw
+  
+  - name: Set nodetoken as fact
+    ansible.builtin.set_fact: 
+      nodetoken: "{{ nodetoken_raw.content | b64decode }}"
 
 - name: Install RKE2 agents
   hosts: poc4k_agent_nodes
   become: true
   become_user: root
   vars:
-    nodetoken: "{{ hostvars['poc4k_first_server_node']['node-token'] }}"
+    nodetoken: "{{ hostvars[groups['poc4k_first_server_node'][0]]['nodetoken'] }}"
+    controller_host: "poc4k-tsnode1b.ovng.dev.myovcloud.com"
   tasks:
 
+  - name: Create directory
+    ansible.builtin.file:
+      path: /etc/rancher/rke2
+      state: directory
+      mode: '0644'
+      owner: "{{ ansible_user_id }}"
+      group: "{{ ansible_user_gid }}"
+
   - name: Create config.yaml
-    ansible.builtin.copy:
-      src: ../assets/server-config.yaml
+    ansible.builtin.template:
+      src: ../assets/agent-config.yaml.j2
       dest: /etc/rancher/rke2/config.yaml
       mode: '0644'
       owner: "{{ ansible_user_id }}"
