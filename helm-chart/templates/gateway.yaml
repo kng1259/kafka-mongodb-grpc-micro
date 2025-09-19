@@ -1,0 +1,27 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: {{ .Release.Name }}-gateway
+spec:
+  gatewayClassName: cilium
+  listeners:
+  - name: {{ .Release.Name }}-https-listener
+    protocol: HTTPS
+    port: 443
+    hostname: "*.myovcloud.com"
+    tls:
+      mode: Terminate
+      certificateRefs:
+      - kind: Secret
+        name: {{ .Release.Name }}-tls
+    allowedRoutes:
+      namespaces:
+        from: Same
+  - name: {{ .Release.Name }}-http-listener
+    protocol: HTTP
+    port: 80
+    hostname: "*.myovcloud.com"
+    tls:
+    allowedRoutes:
+      namespaces:
+        from: Same

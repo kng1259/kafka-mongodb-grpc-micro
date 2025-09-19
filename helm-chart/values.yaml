@@ -1,10 +1,19 @@
 global:
   defaultStorageClass: "longhorn-agent-only"
+  security:
+    allowInsecureImages: true
 
 app:
   replicaCount: 1
+  ingressClassName: cilium
+  clusterIssuer: 
+    name: "letsencrypt-staging"
+    secret: "letsencrypt-staging"
 
 kafka:
+  # image:
+  #   repository: bitnamisecure/kafka
+  #   tag: latest
   networkPolicy:
     enabled: false
   listeners:
@@ -52,6 +61,9 @@ mongodb:
   architecture: "replicaset"
   resourcesPreset: "medium"
   replicaCount: 1
+  image:
+    repository: bitnamisecure/mongodb
+    tag: latest
 
   networkPolicy:
     enabled: false
