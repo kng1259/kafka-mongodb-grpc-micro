@@ -6,7 +6,7 @@ global:
 app:
   replicaCount: 1
   ingressClassName: cilium
-  clusterIssuer: 
+  clusterIssuer:
     name: "letsencrypt-staging"
     secret: "letsencrypt-staging"
 
@@ -38,24 +38,24 @@ kafka:
     replicaCount: 3
     persistence:
       enabled: true
-      accessModes: [ ReadWriteOncePod ]
+      accessModes: [ReadWriteOncePod]
       size: 4Gi
   broker:
     replicaCount: 0
     persistence:
       enabled: true
-      accessModes: [ ReadWriteOncePod ]
+      accessModes: [ReadWriteOncePod]
       size: 4Gi
 
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-        - matchExpressions:
-          - key: agent
-            operator: In
-            values:
-            - "true"
+  # affinity:
+  #   nodeAffinity:
+  #     requiredDuringSchedulingIgnoredDuringExecution:
+  #       nodeSelectorTerms:
+  #       - matchExpressions:
+  #         - key: agent
+  #           operator: In
+  #           values:
+  #           - "true"
 
 mongodb:
   architecture: "replicaset"
@@ -76,19 +76,19 @@ mongodb:
     passwords: ["passb"]
     databases: ["productdb"]
 
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-        - matchExpressions:
-          - key: agent
-            operator: In
-            values:
-            - "true"
+  # affinity:
+  #   nodeAffinity:
+  #     requiredDuringSchedulingIgnoredDuringExecution:
+  #       nodeSelectorTerms:
+  #       - matchExpressions:
+  #         - key: agent
+  #           operator: In
+  #           values:
+  #           - "true"
 
   persistence:
     enabled: true
-    accessModes: [ ReadWriteOncePod ]
+    accessModes: [ReadWriteOncePod]
     size: 4Gi
   passwordUpdateJob:
     enabled: false
@@ -100,7 +100,6 @@ mongodb:
     enabled: false
   metrics:
     enabled: false
-
 # image:
 #   repository: nginx
 #   pullPolicy: IfNotPresent

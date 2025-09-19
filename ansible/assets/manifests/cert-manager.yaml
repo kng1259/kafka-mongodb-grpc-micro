@@ -5,7 +5,7 @@ metadata:
     helmcharts.cattle.io/managed-by: helm-controller
   finalizers:
     - wrangler.cattle.io/on-helm-chart-remove
-  name: cert-manager-install
+  name: cert-manager
   namespace: default
 spec:
   version: v1.18.2
@@ -14,5 +14,6 @@ spec:
   failurePolicy: abort
   targetNamespace: cert-manager
   createNamespace: true
-  set:
-    crds.enabled: true
+  valuesContent: |-
+    crds:
+      enabled: true

@@ -5,7 +5,7 @@ metadata:
     helmcharts.cattle.io/managed-by: helm-controller
   finalizers:
     - wrangler.cattle.io/on-helm-chart-remove
-  name: grafana-install
+  name: grafana
   namespace: default
 spec:
   version: v9.4.5
