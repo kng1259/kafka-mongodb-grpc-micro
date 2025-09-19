@@ -1,0 +1,18 @@
+poc4k_first_server_node:
+  hosts:
+    tsnode1b:
+      ansible_host: poc4k-tsnode1b.ovng.dev.myovcloud.com
+
+poc4k_agent_nodes:
+  hosts:
+    tsnode2b:
+      ansible_host: poc4k-tsnode2b.ovng.dev.myovcloud.com
+    tsnode3b:
+      ansible_host: poc4k-tsnode3b.ovng.dev.myovcloud.com
+
+poc4k:
+  children:
+    poc4k_first_server_node:
+    poc4k_agent_nodes:
+  vars:
+    ansible_user: ubuntu

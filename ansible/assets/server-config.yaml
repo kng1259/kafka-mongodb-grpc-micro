@@ -1,0 +1,3 @@
+cni: cilium
+disable-kube-proxy: true
+ingress-controller: none

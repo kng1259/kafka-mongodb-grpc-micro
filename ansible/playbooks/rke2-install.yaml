@@ -1,0 +1,61 @@
+---
+- name: Install RKE2 first server
+  hosts: poc4k_first_server_node
+  become: true
+  become_user: root
+  tasks:
+
+  - name: Create config.yaml
+    ansible.builtin.copy:
+      src: ../assets/server-config.yaml
+      dest: /etc/rancher/rke2/config.yaml
+      mode: '0644'
+      owner: "{{ ansible_user_id }}"
+      group: "{{ ansible_user_gid }}"
+
+  - name: Create rke-cilium-config.yaml
+    ansible.builtin.copy:
+      src: ../assets/rke2-cilium-config.yaml
+      dest: /var/lib/rancher/rke2/server/manifests/rke2-cilium-config.yaml
+      mode: '0644'
+      owner: "{{ ansible_user_id }}"
+      group: "{{ ansible_user_gid }}"
+
+  - name: Install rke2
+    ansible.builtin.shell: curl -sfL https://get.rke2.io | sh -
+
+  - name: Enable and start rke2-server
+    ansible.builtin.command: systemctl enable --now rke2-server.service
+
+  - name: Retrieve kubeconfig
+    ansible.builtin.fetch:
+      src: /etc/rancher/rke2/rke2.yaml
+      dest: ~/.kube/config
+      flat: yes
+
+  - name: Retrieve node-token
+    ansible.builtin.fetch:
+      src: /var/lib/rancher/rke2/server/node-token
+    register: node-token
+
+- name: Install RKE2 agents
+  hosts: poc4k_agent_nodes
+  become: true
+  become_user: root
+  vars:
+    nodetoken: "{{ hostvars['poc4k_first_server_node']['node-token'] }}"
+  tasks:
+
+  - name: Create config.yaml
+    ansible.builtin.copy:
+      src: ../assets/server-config.yaml
+      dest: /etc/rancher/rke2/config.yaml
+      mode: '0644'
+      owner: "{{ ansible_user_id }}"
+      group: "{{ ansible_user_gid }}"
+
+  - name: Install rke2
+    ansible.builtin.shell: curl -sfL https://get.rke2.io | INSTALL_RKE2_TYPE="agent" sh -
+
+  - name: Enable and start rke2-agent
+    ansible.builtin.command: systemctl enable --now rke2-agent.service
