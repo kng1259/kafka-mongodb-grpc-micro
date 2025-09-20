@@ -8,7 +8,7 @@
   - name: Fetch kubeconfig
     ansible.builtin.fetch:
       src: /etc/rancher/rke2/rke2.yaml
-      dest: ~/.kube/config
+      dest: ~/.kube/rke2_config
       flat: yes
 
   - name: Fetch assets/server-config.yaml

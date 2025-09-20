@@ -1,0 +1,3 @@
+---
+- ansible.builtin.import_playbook: rke2-sync-hosts.yaml
+- ansible.builtin.import_playbook: rke2-install.yaml

@@ -4,51 +4,62 @@
   become: true
   become_user: root
   tasks:
+    - name: Create directory
+      ansible.builtin.file:
+        path: /etc/rancher/rke2
+        state: directory
+        mode: "0644"
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_gid }}"
 
-  - name: Create directory
-    ansible.builtin.file:
-      path: /etc/rancher/rke2
-      state: directory
-      mode: '0644'
-      owner: "{{ ansible_user_id }}"
-      group: "{{ ansible_user_gid }}"
-    
-  - name: Create config.yaml
-    ansible.builtin.copy:
-      src: ../assets/server-config.yaml
-      dest: /etc/rancher/rke2/config.yaml
-      mode: '0644'
-      owner: "{{ ansible_user_id }}"
-      group: "{{ ansible_user_gid }}"
+    - name: Create config.yaml
+      ansible.builtin.copy:
+        src: ../assets/server-config.yaml
+        dest: /etc/rancher/rke2/config.yaml
+        mode: "0644"
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_gid }}"
 
-  - name: Sync manifests
-    ansible.builtin.copy:
-      src: ../assets/manifests/
-      dest: /var/lib/rancher/rke2/server/manifests/
-      mode: '0644'
-      owner: "{{ ansible_user_id }}"
-      group: "{{ ansible_user_gid }}"
+    - name: Sync manifests
+      ansible.builtin.copy:
+        src: ../assets/manifests/
+        dest: /var/lib/rancher/rke2/server/manifests/
+        mode: "0644"
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_gid }}"
 
-  - name: Install rke2
-    ansible.builtin.shell: curl -sfL https://get.rke2.io | sh -
+    - name: Install rke2
+      ansible.builtin.shell: curl -sfL https://get.rke2.io | sh -
 
-  - name: Enable and start rke2-server
-    ansible.builtin.command: systemctl enable --now rke2-server.service
+    - name: Enable and start rke2-server
+      ansible.builtin.command: systemctl enable --now rke2-server.service
 
-  - name: Retrieve kubeconfig
-    ansible.builtin.fetch:
-      src: /etc/rancher/rke2/rke2.yaml
-      dest: ~/.kube/config
-      flat: yes
+    - name: Wait until rke2 is up
+      ansible.builtin.wait_for:
+        path: /etc/rancher/rke2/rke2.yaml
+        state: present
+        msg: Timeout to find file /etc/rancher/rke2/rke2.yaml
 
-  - name: Retrieve node-token
-    ansible.builtin.slurp:
-      src: /var/lib/rancher/rke2/server/node-token
-    register: nodetoken_raw
-  
-  - name: Set nodetoken as fact
-    ansible.builtin.set_fact: 
-      nodetoken: "{{ nodetoken_raw.content | b64decode }}"
+    - name: Replace localhost with server IP in kubeconfig
+      ansible.builtin.replace:
+        path: /etc/rancher/rke2/rke2.yaml
+        regexp: '127\.0\.0\.1'
+        replace: "{{ ansible_hostname }}"
+
+    - name: Retrieve kubeconfig
+      ansible.builtin.fetch:
+        src: /etc/rancher/rke2/rke2.yaml
+        dest: ~/.kube/rke2_config
+        flat: yes
+
+    - name: Retrieve node-token
+      ansible.builtin.slurp:
+        src: /var/lib/rancher/rke2/server/node-token
+      register: nodetoken_raw
+
+    - name: Set nodetoken as fact
+      ansible.builtin.set_fact:
+        nodetoken: "{{ nodetoken_raw.content | b64decode }}"
 
 - name: Install RKE2 agents
   hosts: poc4k_agent_nodes
@@ -56,27 +67,26 @@
   become_user: root
   vars:
     nodetoken: "{{ hostvars[groups['poc4k_first_server_node'][0]]['nodetoken'] }}"
-    controller_host: "poc4k-tsnode1b.ovng.dev.myovcloud.com"
+    controller_host: "{{ groups['poc4k_first_server_node'][0] }}"
   tasks:
+    - name: Create directory
+      ansible.builtin.file:
+        path: /etc/rancher/rke2
+        state: directory
+        mode: "0644"
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_gid }}"
 
-  - name: Create directory
-    ansible.builtin.file:
-      path: /etc/rancher/rke2
-      state: directory
-      mode: '0644'
-      owner: "{{ ansible_user_id }}"
-      group: "{{ ansible_user_gid }}"
+    - name: Create config.yaml
+      ansible.builtin.template:
+        src: ../assets/agent-config.yaml.j2
+        dest: /etc/rancher/rke2/config.yaml
+        mode: "0644"
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_gid }}"
 
-  - name: Create config.yaml
-    ansible.builtin.template:
-      src: ../assets/agent-config.yaml.j2
-      dest: /etc/rancher/rke2/config.yaml
-      mode: '0644'
-      owner: "{{ ansible_user_id }}"
-      group: "{{ ansible_user_gid }}"
+    - name: Install rke2
+      ansible.builtin.shell: curl -sfL https://get.rke2.io | INSTALL_RKE2_TYPE="agent" sh -
 
-  - name: Install rke2
-    ansible.builtin.shell: curl -sfL https://get.rke2.io | INSTALL_RKE2_TYPE="agent" sh -
-
-  - name: Enable and start rke2-agent
-    ansible.builtin.command: systemctl enable --now rke2-agent.service
+    - name: Enable and start rke2-agent
+      ansible.builtin.command: systemctl enable --now rke2-agent.service
