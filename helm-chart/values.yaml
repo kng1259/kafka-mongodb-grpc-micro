@@ -6,9 +6,8 @@ global:
 app:
   replicaCount: 1
   ingressClassName: cilium
-  clusterIssuer:
-    name: "letsencrypt-staging"
-    secret: "letsencrypt-staging"
+  issuer:
+    email: kngondajob@gmail.com
 
 kafka:
   # image:

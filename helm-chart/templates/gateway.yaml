@@ -2,13 +2,16 @@ apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
   name: {{ .Release.Name }}-gateway
+  annotations:
+    # cert-manager.io/issuer: {{ .Release.Name }}-staging-issuer
+    cert-manager.io/cluster-issuer: selfsigned
 spec:
   gatewayClassName: cilium
   listeners:
-  - name: {{ .Release.Name }}-https-listener
+  - name: {{ .Release.Name }}-https-listener-lb
     protocol: HTTPS
     port: 443
-    hostname: "*.myovcloud.com"
+    hostname: "*.ovng.dev.myovcloud.com"
     tls:
       mode: Terminate
       certificateRefs:
@@ -20,8 +23,7 @@ spec:
   - name: {{ .Release.Name }}-http-listener
     protocol: HTTP
     port: 80
-    hostname: "*.myovcloud.com"
-    tls:
+    hostname: "*.ovng.dev.myovcloud.com"
     allowedRoutes:
       namespaces:
         from: Same

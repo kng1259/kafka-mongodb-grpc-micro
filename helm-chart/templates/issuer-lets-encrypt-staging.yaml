@@ -1,0 +1,21 @@
+# clusterissuer-lets-encrypt-staging.yaml
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: {{ .Release.Name }}-staging-issuer
+spec:
+  acme:
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    email: {{ .Values.app.issuer.email }}
+    privateKeySecretRef:
+      name: {{ .Release.Name }}-staging-issuer
+    solvers:
+      - http01:
+          ingress: 
+            class: cilium
+          # gatewayHTTPRoute:
+          #   parentRefs:
+          #     - name: {{ .Release.Name }}-gateway
+          #       namespace: {{ .Release.Namespace }}
+          #       kind: Gateway
+          #       group: ""
