@@ -1,0 +1,56 @@
+---
+- name: Sync agent nodes certs
+  hosts: poc4k_agent_nodes
+  become: true
+  become_user: root
+  tasks:
+
+  - name: Create directory
+    ansible.builtin.file:
+      path: /usr/local/share/ca-certificates
+      state: directory
+      mode: "0644"
+      owner: "{{ ansible_user_id }}"
+      group: "{{ ansible_user_gid }}"
+
+  - name: Sync certs
+    ansible.builtin.copy:
+      src: ../assets/nginx.crt
+      dest: /usr/local/share/ca-certificates/ca.crt
+      mode: '0644'
+      owner: "{{ ansible_user_id }}"
+      group: "{{ ansible_user_gid }}"
+
+  - name: Update certs
+    ansible.builtin.command: update-ca-certificates
+
+  - name: Restart cluster
+    ansible.builtin.command: systemctl restart rke2-agent.service
+
+- name: Sync server node certs
+  hosts: poc4k-first-server-node
+  become: true
+  become_user: root
+  tasks:
+
+  - name: Create directory
+    ansible.builtin.file:
+      path: /usr/local/share/ca-certificates
+      state: directory
+      mode: "0644"
+      owner: "{{ ansible_user_id }}"
+      group: "{{ ansible_user_gid }}"
+
+  - name: Sync certs
+    ansible.builtin.copy:
+      src: ../assets/nginx.crt
+      dest: /usr/local/share/ca-certificates/ca.crt
+      mode: '0644'
+      owner: "{{ ansible_user_id }}"
+      group: "{{ ansible_user_gid }}"
+
+  - name: Update certs
+    ansible.builtin.command: update-ca-certificates
+
+  - name: Restart cluster
+    ansible.builtin.command: systemctl restart rke2-server.service

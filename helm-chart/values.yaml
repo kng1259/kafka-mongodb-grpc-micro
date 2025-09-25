@@ -6,6 +6,11 @@ global:
 app:
   replicaCount: 1
   ingressClassName: cilium
+  image:
+    registry: poc4k-tsnode1b.ovng.dev.myovcloud.com:8444
+    repository_prefix: kmgm
+    tag: latest
+    pullSecrets: nexuspullsecret
   issuer:
     email: kngondajob@gmail.com
 

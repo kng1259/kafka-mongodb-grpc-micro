@@ -20,13 +20,16 @@ spec:
     spec:
       containers:
       - name: producer
-        image: kng1259/kmgm-producer:latest
+        # image: kng1259/kmgm-producer:latest
+        image: "{{ .Values.app.image.registry }}/{{ .Values.app.image.repository_prefix }}-producer:{{ .Values.app.image.tag }}"
         ports:
         - containerPort: 8080
         volumeMounts:
         - name: secret-volume
           readOnly: true
           mountPath: /app/config
+      imagePullSecrets: 
+      - name: "{{ .Values.app.image.pullSecrets }}"
       volumes:
       - name: secret-volume
         secret:
@@ -54,13 +57,15 @@ spec:
     spec:
       containers:
       - name: consumer
-        image: kng1259/kmgm-consumer:latest
+        image: "{{ .Values.app.image.registry }}/{{ .Values.app.image.repository_prefix }}-consumer:{{ .Values.app.image.tag }}"
         ports:
         - containerPort: 9080
         volumeMounts:
         - name: secret-volume
           readOnly: true
           mountPath: /app/config
+      imagePullSecrets: 
+      - name: "{{ .Values.app.image.pullSecrets }}"
       volumes:
       - name: secret-volume
         secret:
@@ -88,13 +93,15 @@ spec:
     spec:
       containers:
       - name: producer-test
-        image: kng1259/kmgm-producer:latest
+        image: "{{ .Values.app.image.registry }}/{{ .Values.app.image.repository_prefix }}-producer:{{ .Values.app.image.tag }}"
         ports:
         - containerPort: 8080
         volumeMounts:
         - name: secret-volume
           readOnly: true
           mountPath: /app/config
+      imagePullSecrets: 
+      - name: "{{ .Values.app.image.pullSecrets }}"
       volumes:
       - name: secret-volume
         secret:
