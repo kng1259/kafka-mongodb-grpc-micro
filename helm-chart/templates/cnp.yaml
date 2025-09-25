@@ -228,3 +228,25 @@ spec:
               protocol: TCP
     - toEntities:
       - kube-apiserver
+
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: {{ .Release.Name }}-producer-test-rules
+spec:
+  endpointSelector:
+    matchLabels:
+      {{ include "common.labels.matchLabels" . | nindent 6 }}
+      role: producer-test
+  ingress:
+  - fromEndpoints:
+    - {}
+    - matchExpressions:
+      - key: k8s:io.kubernetes.pod.namespace 
+        operator: In
+        values: 
+        - kube-system
+  egress:
+  - toEndpoints:
+    - {}

@@ -11,11 +11,11 @@ spec:
       name: {{ .Release.Name }}-staging-issuer
     solvers:
       - http01:
-          ingress: 
-            class: cilium
-          # gatewayHTTPRoute:
-          #   parentRefs:
-          #     - name: {{ .Release.Name }}-gateway
-          #       namespace: {{ .Release.Namespace }}
-          #       kind: Gateway
-          #       group: ""
+          # ingress: 
+          #   class: cilium
+          gatewayHTTPRoute:
+            parentRefs:
+              - name: {{ .Release.Name }}-gateway
+                namespace: {{ .Release.Namespace }}
+                kind: Gateway
+                group: ""

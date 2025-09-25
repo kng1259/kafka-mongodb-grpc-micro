@@ -1,0 +1,7 @@
+stages:
+  - SAST
+  - SCA
+  - DAST
+
+include:
+  - template: Jobs/Container-Scanning.gitlab-ci.yml

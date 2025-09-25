@@ -1,6 +1,6 @@
 url="http://poc4k-tsnode1b.ovng.dev.myovcloud.com"
 
-curl -X POST https://poc4k-tsnode1b.ovng.dev.myovcloud.com/products \
+curl -X POST https://poc4k-lb2.ovng.dev.myovcloud.com/products \
   -H "Content-Type: application/json" \
   -k \
   -d '{

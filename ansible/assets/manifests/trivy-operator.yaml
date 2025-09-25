@@ -1,0 +1,17 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  annotations:
+    helmcharts.cattle.io/managed-by: helm-controller
+  finalizers:
+    - wrangler.cattle.io/on-helm-chart-remove
+  name: trivy
+  namespace: default
+spec:
+  version: v0.30.0
+  chart: trivy-operator
+  repo: https://aquasecurity.github.io/helm-charts/
+  failurePolicy: abort
+  targetNamespace: trivy-system
+  createNamespace: true
+  # valuesContent: |-
