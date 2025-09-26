@@ -80,7 +80,7 @@ func main() {
 		cfg.GRPC.Timeout,
 	)
 	if err != nil {
-		log.Printf("Failed to connect to gRPC server: %v", err)
+		log.Fatalf("Failed to connect to gRPC server: %v", err)
 	}
 	defer grpcClient.Close()
 

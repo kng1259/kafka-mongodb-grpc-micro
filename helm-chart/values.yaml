@@ -7,7 +7,7 @@ app:
   replicaCount: 1
   ingressClassName: cilium
   image:
-    registry: poc4k-tsnode1b.ovng.dev.myovcloud.com:8444
+    registry: poc4k-tsnode1b.ovng.dev.myovcloud.com/docker-main
     repository_prefix: kmgm
     tag: latest
     pullSecrets: nexuspullsecret
