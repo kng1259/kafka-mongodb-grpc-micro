@@ -9,15 +9,12 @@ app:
   image:
     registry: poc4k-tsnode1b.ovng.dev.myovcloud.com/docker-main
     repository_prefix: kmgm
-    tag: latest
-    pullSecrets: nexuspullsecret
+    tag: 0.1.0
+    pullSecrets: nexus-regcred
   issuer:
     email: kngondajob@gmail.com
 
 kafka:
-  # image:
-  #   repository: bitnamisecure/kafka
-  #   tag: latest
   networkPolicy:
     enabled: false
   listeners:
@@ -37,6 +34,10 @@ kafka:
     client:
       users: ["usera"]
       passwords: ["passb"]
+  provisioning:
+    enabled: true
+    topics:
+      - name: products
 
   controller:
     replicaCount: 3
