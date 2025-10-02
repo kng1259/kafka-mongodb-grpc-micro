@@ -14,7 +14,7 @@
 
     - name: Create config.yaml
       ansible.builtin.copy:
-        src: ../assets/server-config.yaml
+        src: ../../assets/server-config.yaml
         dest: /etc/rancher/rke2/config.yaml
         mode: "0644"
         owner: "{{ ansible_user_id }}"
@@ -22,7 +22,7 @@
 
     - name: Sync manifests
       ansible.builtin.copy:
-        src: ../assets/manifests/
+        src: ../../assets/manifests/
         dest: /var/lib/rancher/rke2/server/manifests/
         mode: "0644"
         owner: "{{ ansible_user_id }}"
@@ -79,7 +79,7 @@
 
     - name: Create config.yaml
       ansible.builtin.template:
-        src: ../assets/agent-config.yaml.j2
+        src: ../../assets/agent-config.yaml.j2
         dest: /etc/rancher/rke2/config.yaml
         mode: "0644"
         owner: "{{ ansible_user_id }}"
