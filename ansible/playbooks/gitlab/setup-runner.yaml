@@ -1,0 +1,41 @@
+---
+- name: Setup GitLab runners
+  hosts: poc4k_gitlab_runners
+  become: true
+  become_user: root
+  vars:
+    token: ""
+  tasks:
+    - name: Ensure dependencies
+      ansible.builtin.package: 
+        name:
+        - curl
+        - ca-certificates
+        - docker
+        state: present
+        
+    - name: Add GitLab runner package repository
+      ansible.builtin.shell: curl --silent "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh" | sudo bash
+
+    - name: Install GitLab runner
+      ansible.builtin.package: 
+        name: gitlab-runner
+        state: present
+    
+    - name: Register runner
+      ansible.builtin.command: 
+        argv:
+        - gitlab-runner 
+        - register 
+        - --url
+        - http://poc4k-tsnode1b.ovng.dev.myovcloud.com
+        - --token
+        - "{{ token }}"
+        - --executor
+        - docker
+        - --docker-image
+        - alpine:latest
+        - --non-interactive
+
+    - name: Run runner
+      ansible.builtin.command: gitlab-runner start

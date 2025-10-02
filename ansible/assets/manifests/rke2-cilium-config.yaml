@@ -19,7 +19,7 @@ spec:
       enforceHttps: false
       hostNetwork:
         enabled: true 
-        sharedListenerPort: 8080
+        sharedListenerPort: 8079
     gatewayAPI:
       enabled: true
       enableAppProtocol: true

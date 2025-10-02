@@ -1,0 +1,42 @@
+---
+- name: Install one GitLab instance
+  hosts: poc4k_gitlab
+  become: true
+  become_user: root
+  vars:
+    gitlab_hostname: https://gitlab.poc4k-tsnode1b.ovng.dev.myovcloud.com
+    gitlab_email: kngondajob@gmail.com
+    gitlab_password: imanadmin
+  tasks:
+    - name: Ensure dependencies
+      ansible.builtin.package: 
+        name:
+        - curl
+        state: present
+
+    - name: Add GitLab package repository
+      ansible.builtin.shell: curl --silent "https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh" | bash
+
+    - name: Create directory
+      ansible.builtin.file:
+        path: /etc/gitlab
+        state: directory
+        mode: "0500"
+        owner: "root"
+
+    - name: Sync config
+      ansible.builtin.copy:
+        src: ../../assets/gitlab.rb
+        dest: /etc/gitlab/gitlab.rb
+        mode: "0500"
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_gid }}"
+    
+    - name: Install GitLab
+      ansible.builtin.package: 
+        name: gitlab-ce
+        state: present
+      environment:
+        EXTERNAL_URL: "{{ gitlab_hostname }}"
+        GITLAB_ROOT_EMAIL: "{{ gitlab_email }}"
+        GITLAB_ROOT_PASSWORD: "{{ gitlab_password }}"
