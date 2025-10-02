@@ -1,0 +1,524 @@
+
+Report Summary
+
+┌──────────────────────────────────────────────────────────────┬──────┬───────────────────┬─────────┐
+│                            Target                            │ Type │ Misconfigurations │ Secrets │
+├──────────────────────────────────────────────────────────────┼──────┼───────────────────┼─────────┤
+│ charts/kafka/templates/broker/pdb.yaml                       │ helm │         0         │    -    │
+├──────────────────────────────────────────────────────────────┼──────┼───────────────────┼─────────┤
+│ charts/kafka/templates/controller-eligible/configmap.yaml    │ helm │         2         │    -    │
+├──────────────────────────────────────────────────────────────┼──────┼───────────────────┼─────────┤
+│ charts/kafka/templates/controller-eligible/pdb.yaml          │ helm │         0         │    -    │
+├──────────────────────────────────────────────────────────────┼──────┼───────────────────┼─────────┤
+│ charts/kafka/templates/controller-eligible/statefulset.yaml  │ helm │         6         │    -    │
+├──────────────────────────────────────────────────────────────┼──────┼───────────────────┼─────────┤
+│ charts/kafka/templates/controller-eligible/svc-headless.yaml │ helm │         0         │    -    │
+├──────────────────────────────────────────────────────────────┼──────┼───────────────────┼─────────┤
+│ charts/kafka/templates/provisioning/serviceaccount.yaml      │ helm │         0         │    -    │
+├──────────────────────────────────────────────────────────────┼──────┼───────────────────┼─────────┤
+│ charts/kafka/templates/rbac/serviceaccount.yaml              │ helm │         0         │    -    │
+├──────────────────────────────────────────────────────────────┼──────┼───────────────────┼─────────┤
+│ charts/kafka/templates/secrets.yaml                          │ helm │         0         │    -    │
+├──────────────────────────────────────────────────────────────┼──────┼───────────────────┼─────────┤
+│ charts/kafka/templates/svc.yaml                              │ helm │         0         │    -    │
+├──────────────────────────────────────────────────────────────┼──────┼───────────────────┼─────────┤
+│ charts/mongodb/templates/common-scripts-cm.yaml              │ helm │         0         │    -    │
+├──────────────────────────────────────────────────────────────┼──────┼───────────────────┼─────────┤
+│ charts/mongodb/templates/replicaset/headless-svc.yaml        │ helm │         0         │    -    │
+├──────────────────────────────────────────────────────────────┼──────┼───────────────────┼─────────┤
+│ charts/mongodb/templates/replicaset/pdb.yaml                 │ helm │         0         │    -    │
+├──────────────────────────────────────────────────────────────┼──────┼───────────────────┼─────────┤
+│ charts/mongodb/templates/replicaset/scripts-configmap.yaml   │ helm │         1         │    -    │
+├──────────────────────────────────────────────────────────────┼──────┼───────────────────┼─────────┤
+│ charts/mongodb/templates/replicaset/statefulset.yaml         │ helm │         8         │    -    │
+├──────────────────────────────────────────────────────────────┼──────┼───────────────────┼─────────┤
+│ charts/mongodb/templates/secrets.yaml                        │ helm │         0         │    -    │
+├──────────────────────────────────────────────────────────────┼──────┼───────────────────┼─────────┤
+│ charts/mongodb/templates/serviceaccount.yaml                 │ helm │         0         │    -    │
+├──────────────────────────────────────────────────────────────┼──────┼───────────────────┼─────────┤
+│ templates/cnp.yaml                                           │ helm │         0         │    -    │
+├──────────────────────────────────────────────────────────────┼──────┼───────────────────┼─────────┤
+│ templates/deployment.yaml                                    │ helm │         6         │    -    │
+├──────────────────────────────────────────────────────────────┼──────┼───────────────────┼─────────┤
+│ templates/gateway.yaml                                       │ helm │         0         │    -    │
+├──────────────────────────────────────────────────────────────┼──────┼───────────────────┼─────────┤
+│ templates/httproute.yaml                                     │ helm │         0         │    -    │
+├──────────────────────────────────────────────────────────────┼──────┼───────────────────┼─────────┤
+│ templates/issuer-lets-encrypt-staging.yaml                   │ helm │         0         │    -    │
+├──────────────────────────────────────────────────────────────┼──────┼───────────────────┼─────────┤
+│ templates/secret.yaml                                        │ helm │         0         │    -    │
+├──────────────────────────────────────────────────────────────┼──────┼───────────────────┼─────────┤
+│ templates/service.yaml                                       │ helm │         0         │    -    │
+└──────────────────────────────────────────────────────────────┴──────┴───────────────────┴─────────┘
+Legend:
+- '-': Not scanned
+- '0': Clean (no security findings detected)
+
+
+charts/kafka/templates/controller-eligible/configmap.yaml (helm)
+================================================================
+Tests: 60 (SUCCESSES: 58, FAILURES: 2)
+Failures: 2 (UNKNOWN: 0, LOW: 0, MEDIUM: 1, HIGH: 1, CRITICAL: 0)
+
+AVD-KSV-01010 (MEDIUM): ConfigMap 'kmgm-app-kafka-controller-configuration' in '' namespace stores sensitive contents in key(s) or value(s) '{"listener.name.controller.plain.sasl.jaas.config", "listener.name.controller.scram-sha-256.sasl.jaas.config", "listener.name.controller.scram-sha-512.sasl.jaas.config", "listener.name.internal.plain.sasl.jaas.config", "listener.name.internal.scram-sha-256.sasl.jaas.config", "listener.name.internal.scram-sha-512.sasl.jaas.config"}'
+═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+Storing sensitive content such as usernames and email addresses in configMaps is unsafe
+
+See https://avd.aquasec.com/misconfig/avd-ksv-01010
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+AVD-KSV-0109 (HIGH): ConfigMap 'kmgm-app-kafka-controller-configuration' in '' namespace stores secrets in key(s) or value(s) '{"listener.name.controller.plain.sasl.jaas.config", "listener.name.controller.scram-sha-256.sasl.jaas.config", "listener.name.controller.scram-sha-512.sasl.jaas.config", "listener.name.internal.plain.sasl.jaas.config", "listener.name.internal.scram-sha-256.sasl.jaas.config", "listener.name.internal.scram-sha-512.sasl.jaas.config"}'
+═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+Storing secrets in configMaps is unsafe
+
+See https://avd.aquasec.com/misconfig/avd-ksv-0109
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+charts/kafka/templates/controller-eligible/statefulset.yaml (helm)
+==================================================================
+Tests: 98 (SUCCESSES: 92, FAILURES: 6)
+Failures: 6 (UNKNOWN: 0, LOW: 4, MEDIUM: 2, HIGH: 0, CRITICAL: 0)
+
+AVD-KSV-0020 (LOW): Container 'kafka' of StatefulSet 'kmgm-app-kafka-controller' should set 'securityContext.runAsUser' > 10000
+═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+Force the container to run with user ID > 10000 to avoid conflicts with the host’s user table.
+
+See https://avd.aquasec.com/misconfig/ksv020
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ charts/kafka/templates/controller-eligible/statefulset.yaml:227-318
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 227 ┌         - name: kafka
+ 228 │           image: docker.io/bitnami/kafka:4.0.0-debian-12-r10
+ 229 │           imagePullPolicy: "IfNotPresent"
+ 230 │           securityContext:
+ 231 │             allowPrivilegeEscalation: false
+ 232 │             capabilities:
+ 233 │               drop:
+ 234 │               - ALL
+ 235 └             readOnlyRootFilesystem: true
+ ...   
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+AVD-KSV-0020 (LOW): Container 'prepare-config' of StatefulSet 'kmgm-app-kafka-controller' should set 'securityContext.runAsUser' > 10000
+═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+Force the container to run with user ID > 10000 to avoid conflicts with the host’s user table.
+
+See https://avd.aquasec.com/misconfig/ksv020
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ charts/kafka/templates/controller-eligible/statefulset.yaml:71-225
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  71 ┌         - name: prepare-config
+  72 │           image: docker.io/bitnami/kafka:4.0.0-debian-12-r10
+  73 │           imagePullPolicy: IfNotPresent
+  74 │           securityContext:
+  75 │             allowPrivilegeEscalation: false
+  76 │             capabilities:
+  77 │               add: []
+  78 │               drop:
+  79 └               - ALL
+  ..   
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+AVD-KSV-0021 (LOW): Container 'kafka' of StatefulSet 'kmgm-app-kafka-controller' should set 'securityContext.runAsGroup' > 10000
+═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+Force the container to run with group ID > 10000 to avoid conflicts with the host’s user table.
+
+See https://avd.aquasec.com/misconfig/ksv021
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ charts/kafka/templates/controller-eligible/statefulset.yaml:227-318
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 227 ┌         - name: kafka
+ 228 │           image: docker.io/bitnami/kafka:4.0.0-debian-12-r10
+ 229 │           imagePullPolicy: "IfNotPresent"
+ 230 │           securityContext:
+ 231 │             allowPrivilegeEscalation: false
+ 232 │             capabilities:
+ 233 │               drop:
+ 234 │               - ALL
+ 235 └             readOnlyRootFilesystem: true
+ ...   
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+AVD-KSV-0021 (LOW): Container 'prepare-config' of StatefulSet 'kmgm-app-kafka-controller' should set 'securityContext.runAsGroup' > 10000
+═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+Force the container to run with group ID > 10000 to avoid conflicts with the host’s user table.
+
+See https://avd.aquasec.com/misconfig/ksv021
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ charts/kafka/templates/controller-eligible/statefulset.yaml:71-225
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  71 ┌         - name: prepare-config
+  72 │           image: docker.io/bitnami/kafka:4.0.0-debian-12-r10
+  73 │           imagePullPolicy: IfNotPresent
+  74 │           securityContext:
+  75 │             allowPrivilegeEscalation: false
+  76 │             capabilities:
+  77 │               add: []
+  78 │               drop:
+  79 └               - ALL
+  ..   
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+AVD-KSV-0125 (MEDIUM): Container kafka in statefulset kmgm-app-kafka-controller (namespace: ) uses an image from an untrusted registry.
+═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+Ensure that all containers use images only from trusted registry domains.
+
+See https://avd.aquasec.com/misconfig/ksv0125
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ charts/kafka/templates/controller-eligible/statefulset.yaml:227-318
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 227 ┌         - name: kafka
+ 228 │           image: docker.io/bitnami/kafka:4.0.0-debian-12-r10
+ 229 │           imagePullPolicy: "IfNotPresent"
+ 230 │           securityContext:
+ 231 │             allowPrivilegeEscalation: false
+ 232 │             capabilities:
+ 233 │               drop:
+ 234 │               - ALL
+ 235 └             readOnlyRootFilesystem: true
+ ...   
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+AVD-KSV-0125 (MEDIUM): Container prepare-config in statefulset kmgm-app-kafka-controller (namespace: ) uses an image from an untrusted registry.
+═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+Ensure that all containers use images only from trusted registry domains.
+
+See https://avd.aquasec.com/misconfig/ksv0125
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ charts/kafka/templates/controller-eligible/statefulset.yaml:71-225
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  71 ┌         - name: prepare-config
+  72 │           image: docker.io/bitnami/kafka:4.0.0-debian-12-r10
+  73 │           imagePullPolicy: IfNotPresent
+  74 │           securityContext:
+  75 │             allowPrivilegeEscalation: false
+  76 │             capabilities:
+  77 │               add: []
+  78 │               drop:
+  79 └               - ALL
+  ..   
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+charts/mongodb/templates/replicaset/scripts-configmap.yaml (helm)
+=================================================================
+Tests: 60 (SUCCESSES: 59, FAILURES: 1)
+Failures: 1 (UNKNOWN: 0, LOW: 0, MEDIUM: 0, HIGH: 1, CRITICAL: 0)
+
+AVD-KSV-0109 (HIGH): ConfigMap 'kmgm-app-mongodb-scripts' in '' namespace stores secrets in key(s) or value(s) '{"    export MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD", "    export MONGODB_ROOT_PASSWORD", "export MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD", "export MONGODB_ROOT_PASSWORD"}'
+═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+Storing secrets in configMaps is unsafe
+
+See https://avd.aquasec.com/misconfig/avd-ksv-0109
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+charts/mongodb/templates/replicaset/statefulset.yaml (helm)
+===========================================================
+Tests: 99 (SUCCESSES: 91, FAILURES: 8)
+Failures: 8 (UNKNOWN: 0, LOW: 4, MEDIUM: 4, HIGH: 0, CRITICAL: 0)
+
+AVD-KSV-0013 (MEDIUM): Container 'log-dir' of StatefulSet 'kmgm-app-mongodb' should specify an image tag
+═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+It is best to avoid using the ':latest' image tag when deploying containers in production. Doing so makes it hard to track which version of the image is running, and hard to roll back the version.
+
+See https://avd.aquasec.com/misconfig/ksv013
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ charts/mongodb/templates/replicaset/statefulset.yaml:62-96
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  62 ┌         - name: log-dir
+  63 │           image: docker.io/bitnamisecure/mongodb:latest
+  64 │           imagePullPolicy: "IfNotPresent"
+  65 │           command:
+  66 │             - /bin/bash
+  67 │           args:
+  68 │             - -ec
+  69 │             - |
+  70 └               ln -sf /dev/stdout "/opt/bitnami/mongodb/logs/mongodb.log"
+  ..   
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+AVD-KSV-0013 (MEDIUM): Container 'mongodb' of StatefulSet 'kmgm-app-mongodb' should specify an image tag
+═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+It is best to avoid using the ':latest' image tag when deploying containers in production. Doing so makes it hard to track which version of the image is running, and hard to roll back the version.
+
+See https://avd.aquasec.com/misconfig/ksv013
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ charts/mongodb/templates/replicaset/statefulset.yaml:98-220
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  98 ┌         - name: mongodb
+  99 │           image: docker.io/bitnamisecure/mongodb:latest
+ 100 │           imagePullPolicy: "IfNotPresent"
+ 101 │           securityContext:
+ 102 │             allowPrivilegeEscalation: false
+ 103 │             capabilities:
+ 104 │               drop:
+ 105 │               - ALL
+ 106 └             privileged: false
+ ...   
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+AVD-KSV-0020 (LOW): Container 'log-dir' of StatefulSet 'kmgm-app-mongodb' should set 'securityContext.runAsUser' > 10000
+═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+Force the container to run with user ID > 10000 to avoid conflicts with the host’s user table.
+
+See https://avd.aquasec.com/misconfig/ksv020
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ charts/mongodb/templates/replicaset/statefulset.yaml:62-96
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  62 ┌         - name: log-dir
+  63 │           image: docker.io/bitnamisecure/mongodb:latest
+  64 │           imagePullPolicy: "IfNotPresent"
+  65 │           command:
+  66 │             - /bin/bash
+  67 │           args:
+  68 │             - -ec
+  69 │             - |
+  70 └               ln -sf /dev/stdout "/opt/bitnami/mongodb/logs/mongodb.log"
+  ..   
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+AVD-KSV-0020 (LOW): Container 'mongodb' of StatefulSet 'kmgm-app-mongodb' should set 'securityContext.runAsUser' > 10000
+═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+Force the container to run with user ID > 10000 to avoid conflicts with the host’s user table.
+
+See https://avd.aquasec.com/misconfig/ksv020
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ charts/mongodb/templates/replicaset/statefulset.yaml:98-220
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  98 ┌         - name: mongodb
+  99 │           image: docker.io/bitnamisecure/mongodb:latest
+ 100 │           imagePullPolicy: "IfNotPresent"
+ 101 │           securityContext:
+ 102 │             allowPrivilegeEscalation: false
+ 103 │             capabilities:
+ 104 │               drop:
+ 105 │               - ALL
+ 106 └             privileged: false
+ ...   
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+AVD-KSV-0021 (LOW): Container 'log-dir' of StatefulSet 'kmgm-app-mongodb' should set 'securityContext.runAsGroup' > 10000
+═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+Force the container to run with group ID > 10000 to avoid conflicts with the host’s user table.
+
+See https://avd.aquasec.com/misconfig/ksv021
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ charts/mongodb/templates/replicaset/statefulset.yaml:62-96
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  62 ┌         - name: log-dir
+  63 │           image: docker.io/bitnamisecure/mongodb:latest
+  64 │           imagePullPolicy: "IfNotPresent"
+  65 │           command:
+  66 │             - /bin/bash
+  67 │           args:
+  68 │             - -ec
+  69 │             - |
+  70 └               ln -sf /dev/stdout "/opt/bitnami/mongodb/logs/mongodb.log"
+  ..   
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+AVD-KSV-0021 (LOW): Container 'mongodb' of StatefulSet 'kmgm-app-mongodb' should set 'securityContext.runAsGroup' > 10000
+═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+Force the container to run with group ID > 10000 to avoid conflicts with the host’s user table.
+
+See https://avd.aquasec.com/misconfig/ksv021
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ charts/mongodb/templates/replicaset/statefulset.yaml:98-220
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  98 ┌         - name: mongodb
+  99 │           image: docker.io/bitnamisecure/mongodb:latest
+ 100 │           imagePullPolicy: "IfNotPresent"
+ 101 │           securityContext:
+ 102 │             allowPrivilegeEscalation: false
+ 103 │             capabilities:
+ 104 │               drop:
+ 105 │               - ALL
+ 106 └             privileged: false
+ ...   
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+AVD-KSV-0125 (MEDIUM): Container log-dir in statefulset kmgm-app-mongodb (namespace: ) uses an image from an untrusted registry.
+═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+Ensure that all containers use images only from trusted registry domains.
+
+See https://avd.aquasec.com/misconfig/ksv0125
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ charts/mongodb/templates/replicaset/statefulset.yaml:62-96
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  62 ┌         - name: log-dir
+  63 │           image: docker.io/bitnamisecure/mongodb:latest
+  64 │           imagePullPolicy: "IfNotPresent"
+  65 │           command:
+  66 │             - /bin/bash
+  67 │           args:
+  68 │             - -ec
+  69 │             - |
+  70 └               ln -sf /dev/stdout "/opt/bitnami/mongodb/logs/mongodb.log"
+  ..   
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+AVD-KSV-0125 (MEDIUM): Container mongodb in statefulset kmgm-app-mongodb (namespace: ) uses an image from an untrusted registry.
+═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+Ensure that all containers use images only from trusted registry domains.
+
+See https://avd.aquasec.com/misconfig/ksv0125
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ charts/mongodb/templates/replicaset/statefulset.yaml:98-220
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  98 ┌         - name: mongodb
+  99 │           image: docker.io/bitnamisecure/mongodb:latest
+ 100 │           imagePullPolicy: "IfNotPresent"
+ 101 │           securityContext:
+ 102 │             allowPrivilegeEscalation: false
+ 103 │             capabilities:
+ 104 │               drop:
+ 105 │               - ALL
+ 106 └             privileged: false
+ ...   
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+templates/deployment.yaml (helm)
+================================
+Tests: 99 (SUCCESSES: 93, FAILURES: 6)
+Failures: 6 (UNKNOWN: 0, LOW: 3, MEDIUM: 3, HIGH: 0, CRITICAL: 0)
+
+AVD-KSV-0110 (LOW): deployment kmgm-app-consumer in default namespace should set metadata.namespace to a non-default namespace
+═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+Checks whether a workload is running in the default namespace.
+
+See https://avd.aquasec.com/misconfig/ksv110
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ templates/deployment.yaml:5-12
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+   5 ┌   name: kmgm-app-consumer
+   6 │   labels:
+   7 │     app.kubernetes.io/name: kmgm-app
+   8 │     helm.sh/chart: kmgm-app-0.1.0
+   9 │     app.kubernetes.io/instance: kmgm-app
+  10 │     app.kubernetes.io/managed-by: Helm
+  11 │     app.kubernetes.io/version: "0.1.0"
+  12 └     role: consumer
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+AVD-KSV-0110 (LOW): deployment kmgm-app-producer in default namespace should set metadata.namespace to a non-default namespace
+═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+Checks whether a workload is running in the default namespace.
+
+See https://avd.aquasec.com/misconfig/ksv110
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ templates/deployment.yaml:5-12
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+   5 ┌   name: kmgm-app-producer
+   6 │   labels:
+   7 │     app.kubernetes.io/name: kmgm-app
+   8 │     helm.sh/chart: kmgm-app-0.1.0
+   9 │     app.kubernetes.io/instance: kmgm-app
+  10 │     app.kubernetes.io/managed-by: Helm
+  11 │     app.kubernetes.io/version: "0.1.0"
+  12 └     role: producer
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+AVD-KSV-0110 (LOW): deployment kmgm-app-producer-test in default namespace should set metadata.namespace to a non-default namespace
+═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+Checks whether a workload is running in the default namespace.
+
+See https://avd.aquasec.com/misconfig/ksv110
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ templates/deployment.yaml:5-12
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+   5 ┌   name: kmgm-app-producer-test
+   6 │   labels:
+   7 │     app.kubernetes.io/name: kmgm-app
+   8 │     helm.sh/chart: kmgm-app-0.1.0
+   9 │     app.kubernetes.io/instance: kmgm-app
+  10 │     app.kubernetes.io/managed-by: Helm
+  11 │     app.kubernetes.io/version: "0.1.0"
+  12 └     role: producer-test
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+AVD-KSV-0125 (MEDIUM): Container consumer in deployment kmgm-app-consumer (namespace: default) uses an image from an untrusted registry.
+═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+Ensure that all containers use images only from trusted registry domains.
+
+See https://avd.aquasec.com/misconfig/ksv0125
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ templates/deployment.yaml:35-57
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  35 ┌       - name: consumer
+  36 │         image: "poc4k-tsnode1b.ovng.dev.myovcloud.com/docker-main/kmgm-consumer:0.1.0"
+  37 │         ports:
+  38 │         - containerPort: 9080
+  39 │         volumeMounts:
+  40 │         - name: secret-volume
+  41 │           readOnly: true
+  42 │           mountPath: /app/config
+  43 └         securityContext:
+  ..   
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+AVD-KSV-0125 (MEDIUM): Container producer in deployment kmgm-app-producer (namespace: default) uses an image from an untrusted registry.
+═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+Ensure that all containers use images only from trusted registry domains.
+
+See https://avd.aquasec.com/misconfig/ksv0125
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ templates/deployment.yaml:35-57
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  35 ┌       - name: producer
+  36 │         image: "poc4k-tsnode1b.ovng.dev.myovcloud.com/docker-main/kmgm-producer:0.1.0"
+  37 │         ports:
+  38 │         - containerPort: 8080
+  39 │         volumeMounts:
+  40 │         - name: secret-volume
+  41 │           readOnly: true
+  42 │           mountPath: /app/config
+  43 └         securityContext:
+  ..   
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+AVD-KSV-0125 (MEDIUM): Container producer-test in deployment kmgm-app-producer-test (namespace: default) uses an image from an untrusted registry.
+═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+Ensure that all containers use images only from trusted registry domains.
+
+See https://avd.aquasec.com/misconfig/ksv0125
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ templates/deployment.yaml:35-57
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  35 ┌       - name: producer-test
+  36 │         image: "poc4k-tsnode1b.ovng.dev.myovcloud.com/docker-main/kmgm-producer:0.1.0"
+  37 │         ports:
+  38 │         - containerPort: 8080
+  39 │         volumeMounts:
+  40 │         - name: secret-volume
+  41 │           readOnly: true
+  42 │           mountPath: /app/config
+  43 └         securityContext:
+  ..   
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+

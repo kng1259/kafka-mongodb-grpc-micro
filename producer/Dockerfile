@@ -1,16 +1,16 @@
 FROM golang:1.24 as builder
 WORKDIR /app
 
-COPY go.mod go.sum .
+COPY go.mod go.sum ./
 RUN go mod download
 
 COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -o producer .
 
-FROM gcr.io/distroless/static-debian12:debug
+FROM gcr.io/distroless/static-debian12:nonroot
 WORKDIR /app
 
-COPY --from=builder /app/producer .
+COPY --from=builder /app/producer ./
 COPY --from=builder /app/protogen ./protogen
 
 # FOR QUICKTESTING PURPOSES ONLY, REMOVE IN PRODUCTION

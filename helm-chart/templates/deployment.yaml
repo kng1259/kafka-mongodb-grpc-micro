@@ -18,9 +18,12 @@ spec:
         {{- include "common.labels.standard" . | nindent 8 }}
         role: producer
     spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       containers:
       - name: producer
-        # image: kng1259/kmgm-producer:latest
         image: "{{ .Values.app.image.registry }}/{{ .Values.app.image.repository_prefix }}-producer:{{ .Values.app.image.tag }}"
         ports:
         - containerPort: 8080
@@ -28,6 +31,21 @@ spec:
         - name: secret-volume
           readOnly: true
           mountPath: /app/config
+        securityContext:
+          readOnlyRootFilesystem: true
+          runAsUser: 65532
+          runAsGroup: 65532
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+        resources:
+          requests:
+            cpu: {{ .Values.app.resources.requests.cpu | default "500m" }}
+            memory: {{ .Values.app.resources.requests.memory | default "512Mi" }}
+          limits:
+            cpu: {{ .Values.app.resources.limits.cpu | default "1" }}
+            memory: {{ .Values.app.resources.limits.memory | default "512Mi" }}
       imagePullSecrets: 
       - name: "{{ .Values.app.image.pullSecrets }}"
       volumes:
@@ -55,6 +73,10 @@ spec:
         {{- include "common.labels.standard" . | nindent 8 }}
         role: consumer
     spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       containers:
       - name: consumer
         image: "{{ .Values.app.image.registry }}/{{ .Values.app.image.repository_prefix }}-consumer:{{ .Values.app.image.tag }}"
@@ -64,6 +86,21 @@ spec:
         - name: secret-volume
           readOnly: true
           mountPath: /app/config
+        securityContext:
+          readOnlyRootFilesystem: true
+          runAsUser: 65532
+          runAsGroup: 65532
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+        resources:
+          requests:
+            cpu: {{ .Values.app.resources.requests.cpu | default "500m" }}
+            memory: {{ .Values.app.resources.requests.memory | default "512Mi" }}
+          limits:
+            cpu: {{ .Values.app.resources.limits.cpu | default "1" }}
+            memory: {{ .Values.app.resources.limits.memory | default "512Mi" }}
       imagePullSecrets: 
       - name: "{{ .Values.app.image.pullSecrets }}"
       volumes:
@@ -91,6 +128,10 @@ spec:
         {{- include "common.labels.standard" . | nindent 8 }}
         role: producer-test
     spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       containers:
       - name: producer-test
         image: "{{ .Values.app.image.registry }}/{{ .Values.app.image.repository_prefix }}-producer:{{ .Values.app.image.tag }}"
@@ -100,6 +141,21 @@ spec:
         - name: secret-volume
           readOnly: true
           mountPath: /app/config
+        securityContext:
+          readOnlyRootFilesystem: true
+          runAsUser: 65532
+          runAsGroup: 65532
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+        resources:
+          requests:
+            cpu: {{ .Values.app.resources.requests.cpu | default "500m" }}
+            memory: {{ .Values.app.resources.requests.memory | default "512Mi" }}
+          limits:
+            cpu: {{ .Values.app.resources.limits.cpu | default "1" }}
+            memory: {{ .Values.app.resources.limits.memory | default "512Mi" }}
       imagePullSecrets: 
       - name: "{{ .Values.app.image.pullSecrets }}"
       volumes:
