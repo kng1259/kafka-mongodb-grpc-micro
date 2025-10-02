@@ -1,0 +1,79 @@
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    ports:
+      - "443:443"
+      # - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./keys:/etc/nginx/ssl
+    restart: unless-stopped
+    depends_on:
+      nexus-repo:
+        condition: service_healthy
+    networks:
+      - nginx-network
+
+  nexus-repo:
+    image: sonatype/nexus3:3.84.1-alpine
+    container_name: nexus-repo
+    # ports:
+    #   - "8081:8081"
+    environment:
+      NEXUS_DATASTORE_NEXUS_JDBCURL: jdbc:postgresql://postgres:5432/nexus?currentSchema=nexus
+      NEXUS_DATASTORE_NEXUS_USERNAME: nexus_admin
+      NEXUS_DATASTORE_NEXUS_PASSWORD: ${DB_PASSWORD}
+      # NEXUS_DATASTORE_NEXUS_ADVANCED: "maximumPoolSize=100\nmaxLifetime=840000"
+      # INSTALL4J_ADD_VM_PARAMS: -Xms2703m -Xmx2703m -XX:MaxDirectMemorySize=2703m -Djava.util.prefs.userRoot=/nexus-data/javaprefs"
+    volumes:
+      - nexus-data:/nexus-data
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - nexus-network
+      - nginx-network
+    healthcheck:
+      test:
+        ["CMD", "curl", "-f", "http://localhost:8081/service/rest/v1/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  postgres:
+    image: postgres:17
+    command: -c 'config_file=/etc/postgresql/postgresql.conf'
+    container_name: postgres
+    hostname: postgres
+    environment:
+      POSTGRES_USER: nexus_admin
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: nexus
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --lc-collate=en_US.UTF-8 --lc-ctype=en_US.UTF-8"
+    # ports:
+    #   - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./postgresql.conf:/etc/postgresql/postgresql.conf
+      - ./postgres-init:/docker-entrypoint-initdb.d
+    restart: unless-stopped
+    networks:
+      - nexus-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d nexus -U nexus_admin"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres-data:
+    driver: local
+  nexus-data:
+    driver: local
+
+networks:
+  nexus-network:
+  nginx-network:
