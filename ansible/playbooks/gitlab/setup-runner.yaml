@@ -35,6 +35,7 @@
         - docker
         - --docker-image
         - alpine:latest
+        - --docker-privileged
         - --non-interactive
 
     - name: Run runner
