@@ -1,7 +1,63 @@
 stages:
-  - SAST
-  - SCA
-  - DAST
+  - build
+  - test
+  - deploy
+
+variables:
+  PROJECT_NAME: "kmgm"
+  PROJECT_VERSION: "0.1.0"
 
 include:
-  - template: Jobs/Container-Scanning.gitlab-ci.yml
+  - local: ops-template.yml
+
+build_image:consumer:
+  extends: .build_image
+  stage: build
+  variables:
+    SERVICE_NAME: "consumer"
+    SERVICE_DIR: "consumer"
+
+trivy_image_scan:consumer:
+  extends: .trivy_image_scan
+  needs:
+    - job: build_image:consumer
+  stage: test
+  variables:
+    SERVICE_NAME: "consumer"
+    SERVICE_DIR: "consumer"
+
+push_and_sign_image:consumer:
+  extends: .push_and_sign_image
+  stage: deploy
+  needs:
+    - job: build_image:consumer
+    - job: trivy_image_scan:consumer
+  variables:
+    SERVICE_NAME: "consumer"
+    SERVICE_DIR: "consumer"
+
+build_image:producer:
+  extends: .build_image
+  stage: build
+  variables:
+    SERVICE_NAME: "producer"
+    SERVICE_DIR: "producer"
+
+trivy_image_scan:producer:
+  extends: .trivy_image_scan
+  needs:
+    - job: build_image:producer
+  stage: test
+  variables:
+    SERVICE_NAME: "producer"
+    SERVICE_DIR: "producer"
+
+push_and_sign_image:producer:
+  extends: .push_and_sign_image
+  stage: deploy
+  needs:
+    - job: build_image:producer
+    - job: trivy_image_scan:producer
+  variables:
+    SERVICE_NAME: "producer"
+    SERVICE_DIR: "producer"

@@ -1,0 +1,146 @@
+variables:
+  PROJECT_NAME: "km"
+  PROJECT_VERSION: "0.1.0"
+  OCI_REGISTRY: "poc4k-tsnode1b.ovng.dev.myovcloud.com/docker-main"
+  OCI_REGISTRY_HOST: "poc4k-tsnode1b.ovng.dev.myovcloud.com"
+  OCI_REGISTRY_USER: "user"
+  OCI_REGISTRY_PASSWORD: "user"
+  SERVICE_NAME: "consumer"
+  SERVICE_DIR: "consumer"
+
+.build_image:
+  stage: build
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes:
+        - $SERVICE_NAME/**/*
+  image:
+    name: moby/buildkit:latest
+    entrypoint: [""]
+  before_script:
+    - mkdir -p ~/.docker
+    - |
+      echo "{
+        \"auths\": {
+          \"${OCI_REGISTRY}\": {
+            \"auth\": \"$(printf "%s:%s" "${OCI_REGISTRY_USER}" "${OCI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"
+          }
+        }
+      }" > ~/.docker/config.json
+  script:
+    - buildctl-daemonless.sh build
+      --frontend dockerfile.v0
+      --local context=$SERVICE_DIR
+      --local dockerfile=$SERVICE_DIR
+      --export-cache type=registry,ref=$OCI_REGISTRY/$PROJECT_NAME-$SERVICE_NAME/cache,mode=max
+      --import-cache type=registry,ref=$OCI_REGISTRY/$PROJECT_NAME-$SERVICE_NAME/cache
+      --output type=oci,dest=$PROJECT_NAME-$SERVICE_NAME.tar,name=$OCI_REGISTRY/$PROJECT_NAME-$SERVICE_NAME:latest
+  artifacts:
+    paths:
+      - $PROJECT_NAME-$SERVICE_NAME.tar
+    expire_in: 1 hour
+
+.trivy_image_scan:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes:
+        - $SERVICE_NAME/**/*
+  image:
+    name: docker.io/aquasec/trivy:latest
+    entrypoint: [""]
+  variables:
+    GIT_STRATEGY: none
+    TRIVY_NO_PROGRESS: "true"
+    TRIVY_CACHE_DIR: ".trivycache/"
+  before_script:
+    - mkdir image
+    - tar -xf $PROJECT_NAME-$SERVICE_NAME.tar -C image
+  script:
+    - trivy image --download-db-only
+    - trivy image --exit-code 0 --input image
+      --format template --template "@/contrib/gitlab.tpl" --output "$PROJECT_NAME-$SERVICE_NAME-image-report.json"
+    - trivy image --exit-code 0 --input image
+      --format cyclonedx --output "$PROJECT_NAME-$SERVICE_NAME.cdx.json"
+    - trivy image --exit-code 0 --input image
+    - trivy image --exit-code 1 --severity CRITICAL --input image
+  cache:
+    paths:
+      - .trivycache/
+  artifacts:
+    when: always
+    reports:
+      container_scanning: $PROJECT_NAME-$SERVICE_NAME-image-report.json
+      cyclonedx: $PROJECT_NAME-$SERVICE_NAME.cdx.json
+    paths:
+      - $PROJECT_NAME-$SERVICE_NAME.cdx.json
+
+.push_and_sign_image:
+  stage: deploy
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes:
+        - $SERVICE_NAME/**/*
+  image:
+    name: ghcr.io/oras-project/oras:v1.3.0
+    entrypoint: [""]
+  variables:
+    GIT_STRATEGY: none
+    COSIGN_YES: "true"
+    COSIGN_EXPERIMENTAL: "1"
+  id_tokens:
+    SIGSTORE_ID_TOKEN:
+      aud: sigstore
+  before_script:
+    - echo $OCI_REGISTRY_PASSWORD | oras login $OCI_REGISTRY_HOST -u $OCI_REGISTRY_USER --password-stdin
+    - apk add --update cosign
+    - echo $COSIGN_PRIVATE_KEY_BASE64 | base64 -d > cosign.key
+  script:
+    - |
+      oras copy --from-oci-layout $PROJECT_NAME-$SERVICE_NAME.tar:latest $OCI_REGISTRY/$PROJECT_NAME-$SERVICE_NAME:$PROJECT_VERSION,latest \
+      | tee /dev/stderr | grep "Digest:" | awk '{print $NF}' > $PROJECT_NAME-$SERVICE_NAME.imagedigest.txt
+    - DIGEST=$(cat $PROJECT_NAME-$SERVICE_NAME.imagedigest.txt)
+    - cosign sign
+      --registry-referrers-mode oci-1-1
+      --annotations "tag=$PROJECT_VERSION"
+      --key cosign.key
+      $OCI_REGISTRY/$PROJECT_NAME-$SERVICE_NAME@$DIGEST
+    - cosign attest --type cyclonedx
+      --predicate $PROJECT_NAME-$SERVICE_NAME.cdx.json
+      --key cosign.key
+      $OCI_REGISTRY/$PROJECT_NAME-$SERVICE_NAME@$DIGEST
+  artifacts:
+    paths:
+      - $PROJECT_NAME-$SERVICE_NAME.imagedigest.txt
+
+###
+.build_and_push_image:
+  stage: deploy
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes:
+        - $SERVICE_NAME/**/*
+  image:
+    name: moby/buildkit:rootless
+    entrypoint: [""]
+  variables:
+    BUILDKITD_FLAGS: --oci-worker-no-process-sandbox
+  before_script:
+    - mkdir -p ~/.docker
+    - |
+      echo "{
+        \"auths\": {
+          \"${OCI_REGISTRY}\": {
+            \"auth\": \"$(printf "%s:%s" "${OCI_REGISTRY_USER}" "${OCI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"
+          }
+        }
+      }" > ~/.docker/config.json
+  script:
+    - |
+      buildctl-daemonless.sh build \
+        --frontend dockerfile.v0 \
+        --local context=$SERVICE_DIR \
+        --local dockerfile=$SERVICE_DIR \
+        --export-cache type=registry,ref=$OCI_REGISTRY/$PROJECT_NAME-$SERVICE_NAME/cache,mode=max \
+        --import-cache type=registry,ref=$OCI_REGISTRY/$PROJECT_NAME-$SERVICE_NAME/cache \
+        --output type=oci,name=$OCI_REGISTRY/$PROJECT_NAME-$SERVICE_NAME:$PROJECT_VERSION,push=true
