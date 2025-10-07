@@ -247,6 +247,9 @@ spec:
         operator: In
         values: 
         - kube-system
+    - matchExpressions:
+      - key: reserved:ingress
+        operator: Exists
   egress:
   - toEndpoints:
     - {}
