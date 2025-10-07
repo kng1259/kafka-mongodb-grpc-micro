@@ -1,5 +1,8 @@
 global:
-  defaultStorageClass: "longhorn-agent-only"
+  defaultStorageClass: longhorn-agent-only
+  imageRegistry: poc4k-tsnode1b.ovng.dev.myovcloud.com/docker-main
+  imagePullSecrets:
+    - nexus-regcred
   security:
     allowInsecureImages: true
 
@@ -10,6 +13,9 @@ app:
     registry: poc4k-tsnode1b.ovng.dev.myovcloud.com/docker-main
     repository_prefix: kmgm
     tag: 0.1.0
+    digest:
+      consumer: sha256:ffe886e975a9bd5d149fb72ce170e84c29b10e144943135ba8960251564b7908
+      producer: sha256:fc8e25f68b8664a79daf845de23398b235f9b640396660b5d03b6db1b99b7c56
     pullSecrets: nexus-regcred
   issuer:
     email: kngondajob@gmail.com
@@ -46,6 +52,10 @@ kafka:
     topics:
       - name: products
 
+  image:
+    repository: kafka
+    tag: 4.0.0-debian-12-r10
+    # digest: sha256:aa0b2aee8c5610dd1d18d48b4f1df0dbe3267b5d4c338d36c9af9cbf0529c0b0
   controller:
     replicaCount: 3
     persistence:
@@ -74,9 +84,9 @@ mongodb:
   resourcesPreset: "medium"
   replicaCount: 1
   image:
-    repository: bitnamisecure/mongodb
-    tag: latest
-
+    repository: mongodb
+    tag: 8.2.1
+    # digest: 9cc039b36da327abcbc18743bb13ac601fc20bca851eb7dbea5e7bb0f51b2ae1
   networkPolicy:
     enabled: false
 
@@ -112,30 +122,3 @@ mongodb:
     enabled: false
   metrics:
     enabled: false
-# image:
-#   repository: nginx
-#   pullPolicy: IfNotPresent
-#   tag: ""
-
-# imagePullSecrets: []
-
-# podAnnotations: {}
-# podLabels: {}
-
-# podSecurityContext: {}
-# securityContext: {}
-
-# resources: {}
-
-# livenessProbe:
-#   httpGet:
-#     path: /
-#     port: http
-# readinessProbe:
-#   httpGet:
-#     path: /
-#     port: http
-
-# tolerations: []
-
-# affinity: {}

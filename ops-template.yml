@@ -87,7 +87,6 @@ variables:
   variables:
     GIT_STRATEGY: none
     COSIGN_YES: "true"
-    COSIGN_EXPERIMENTAL: "1"
   id_tokens:
     SIGSTORE_ID_TOKEN:
       aud: sigstore
@@ -101,7 +100,6 @@ variables:
       | tee /dev/stderr | grep "Digest:" | awk '{print $NF}' > $PROJECT_NAME-$SERVICE_NAME.imagedigest.txt
     - DIGEST=$(cat $PROJECT_NAME-$SERVICE_NAME.imagedigest.txt)
     - cosign sign
-      --registry-referrers-mode oci-1-1
       --annotations "tag=$PROJECT_VERSION"
       --key cosign.key
       $OCI_REGISTRY/$PROJECT_NAME-$SERVICE_NAME@$DIGEST
