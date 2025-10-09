@@ -1,0 +1,8 @@
+apiVersion: v1
+data:
+  cosign.pub: LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUZrd0V3WUhLb1pJemowQ0FRWUlLb1pJemowREFRY0RRZ0FFYUJRVlpwN0pIeS9TTXVmSUxaQmdUV2EyVEZzdgpsT0lkQ1hRYW16QjFpYkZmWFUzYlVzVzJTR21GQVFDOFh1STl2NDZTR1czUUNCNXhBUTU0VVovRkNnPT0KLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0tCg==
+kind: Secret
+metadata:
+  name: kmgm-image-key
+  namespace: cosign-system
+type: Opaque

@@ -1,0 +1,50 @@
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: kmgm-image-policy
+spec:
+  images:
+    - glob: poc4k-tsnode1b.ovng.dev.myovcloud.com/docker-main/kmgm*
+  authorities:
+    - key:
+        hashAlgorithm: sha256
+        secretRef:
+          name: kmgm-image-key
+      attestations:
+        - name: sbom
+          predicateType: https://cyclonedx.org/bom
+          policy:
+            type: cue
+            data: |
+              predicateType: "https://cyclonedx.org/bom"
+  policy:
+    fetchConfigFile: true
+    type: "cue"
+    data: |
+      config: "linux/amd64": config: User: "65532"
+
+---
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: general-image-policy
+spec:
+  images:
+    - glob: poc4k-tsnode1b.ovng.dev.myovcloud.com/docker-main/*
+  authorities:
+    - key:
+        hashAlgorithm: sha256
+        secretRef:
+          name: kmgm-image-key
+
+---
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: certmanager-image-policy
+spec:
+  images:
+    - glob: quay.io/jetstack/cert-manager-acmesolver*
+  authorities:
+    - static:
+        action: pass

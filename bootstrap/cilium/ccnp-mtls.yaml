@@ -1,0 +1,21 @@
+---
+apiVersion: cilium.io/v2
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: enforce-mtls
+  namespace: dev
+spec:
+  endpointSelector: {}
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  ingress:
+  - fromEndpoints:
+    - {}
+    authentication:
+      mode: required
+  egress:
+  - toEndpoints:
+    - {}
+    authentication:
+      mode: required

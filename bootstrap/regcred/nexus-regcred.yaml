@@ -1,0 +1,8 @@
+apiVersion: v1
+data:
+  .dockerconfigjson: ewoJImF1dGhzIjogewoJCSJwb2M0ay10c25vZGUxYi5vdm5nLmRldi5teW92Y2xvdWQuY29tIjogewoJCQkiYXV0aCI6ICJaRzlqYTJWeUxXMWhhVzR0Y0hWc2JHVnlPbVJ2WTJ0bGNuQjFiR3hsY2c9PSIKCQl9Cgl9Cn0=
+kind: Secret
+metadata:
+  name: nexus-regcred
+  namespace: dev
+type: kubernetes.io/dockerconfigjson
