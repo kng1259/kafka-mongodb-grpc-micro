@@ -84,6 +84,6 @@ spec:
           - http
           - kafka
         serviceMonitor:
-          enabled: true
+          enabled: false
         dashboards:
           enabled: true
