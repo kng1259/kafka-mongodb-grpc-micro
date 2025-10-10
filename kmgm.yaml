@@ -11,12 +11,24 @@ spec:
     targetRevision: 0.1.0
     helm:
       releaseName: kmgm-dev
+      valuesObject:
+        kafka:
+          controller:
+            persistence:
+              size: 3Gi
+          broker:
+            persistence:
+              size: 2Gi
+        mongodb:
+          persistence:
+            size: 2Gi
+
   destination:
     server: https://kubernetes.default.svc
     namespace: dev
   syncPolicy:
     automated:
-      enabled: true
+      enabled: false
       prune: true
       selfHeal: true
     syncOptions:

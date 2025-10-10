@@ -29,7 +29,7 @@ spec:
             root_url: http://poc4k-tsnode1b.ovng.dev.myovcloud.com/grafana/
             serve_from_sub_path: true
         ingress:
-          enabled: false
+          enabled: true
           ingressClassName: cilium
           annotations:
           path: /grafana/
@@ -50,7 +50,7 @@ spec:
     namespace: monitoring
   syncPolicy:
     automated:
-      enabled: true
+      enabled: false
       prune: true
       selfHeal: true
     syncOptions:

@@ -9,6 +9,9 @@ spec:
     repoURL: https://github.com/prometheus-operator/prometheus-operator
     path: "."
     targetRevision: release-0.86
+    kustomize:
+      namespace: monitoring
+
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring

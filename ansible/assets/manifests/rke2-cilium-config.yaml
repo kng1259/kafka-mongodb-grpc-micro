@@ -40,6 +40,8 @@ spec:
           install:
             enabled: true
             server:
+              dataStorage:
+                storageClass: longhorn-agent-only
               podSecurityContext:
                 runAsUser: 0
                 fsGroup: 1000
@@ -84,6 +86,6 @@ spec:
           - http
           - kafka
         serviceMonitor:
-          enabled: false
+          enabled: true
         dashboards:
           enabled: true
