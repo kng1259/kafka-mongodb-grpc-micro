@@ -28,5 +28,13 @@ spec:
         type: PathPrefix
         value: /products-test
     backendRefs:
-    - name: {{ .Release.Name }}-producer-test-service
+    - name: {{ .Release.Name }}-producer-service
+      group: ''
+      kind: Service
       port: 8080
+      weight: 10
+    - name: {{ .Release.Name }}-producer-test-service
+      group: ''
+      kind: Service
+      port: 8080
+      weight: 90

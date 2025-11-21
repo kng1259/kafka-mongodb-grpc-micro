@@ -1,0 +1,18 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ .Release.Name }}-to-consumer-route
+spec:
+  parentRefs:
+  - kind: Service
+    group: ""
+    name: {{ .Release.Name }}-consumer-service
+    port: 9080
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /proto.ProductService
+    backendRefs:
+    - name: {{ .Release.Name }}-consumer-service
+      port: 9080

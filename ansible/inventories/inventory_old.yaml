@@ -1,14 +1,14 @@
 poc4k_first_server_node:
   hosts:
-    lead:
-      ansible_host: poc11-lead.ovng.dev.myovcloud.com
+    tsnode1b:
+      ansible_host: poc4k-tsnode1b.ovng.dev.myovcloud.com
 
 poc4k_agent_nodes:
   hosts:
-    m1:
-      ansible_host: poc11-m1.ovng.dev.myovcloud.com
-    m2:
-      ansible_host: poc11-m2.ovng.dev.myovcloud.com
+    tsnode2b:
+      ansible_host: poc4k-tsnode2b.ovng.dev.myovcloud.com
+    tsnode3b:
+      ansible_host: poc4k-tsnode3b.ovng.dev.myovcloud.com
 
 poc4k:
   children:
@@ -16,7 +16,6 @@ poc4k:
     poc4k_agent_nodes:
   vars:
     ansible_user: ubuntu
-    ansible_port: 1982
 
 poc4k_gitlab:
   hosts:

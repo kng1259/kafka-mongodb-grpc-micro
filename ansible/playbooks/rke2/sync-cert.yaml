@@ -15,7 +15,7 @@
     - name: Sync certs
       ansible.builtin.copy:
         src: ../../assets/nginx.crt
-        dest: /usr/local/share/ca-certificates/ca.crt
+        dest: /usr/local/share/ca-certificates/poc4k-nexus-intern-ca.crt
         mode: "0644"
         owner: "{{ ansible_user_id }}"
         group: "{{ ansible_user_gid }}"
@@ -27,7 +27,7 @@
       ansible.builtin.command: systemctl restart rke2-agent.service
 
 - name: Sync server node certs
-  hosts: poc4k-first-server-node
+  hosts: poc4k_first_server_node
   become: true
   become_user: root
   tasks:

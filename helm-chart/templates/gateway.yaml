@@ -10,8 +10,8 @@ spec:
   listeners:
   - name: {{ .Release.Name }}-https-listener-lb
     protocol: HTTPS
-    port: 8083
-    hostname: "poc4k-lb2.ovng.dev.myovcloud.com"
+    port: 443
+    hostname: "poc11-lead.ovng.dev.myovcloud.com"
     tls:
       mode: Terminate
       certificateRefs:
@@ -22,8 +22,8 @@ spec:
         from: Same
   - name: {{ .Release.Name }}-http-listener-lb
     protocol: HTTP
-    port: 8082
-    hostname: "poc4k-lb2.ovng.dev.myovcloud.com"
+    port: 80
+    hostname: "poc11-lead.ovng.dev.myovcloud.com"
     allowedRoutes:
       namespaces:
         from: Same
