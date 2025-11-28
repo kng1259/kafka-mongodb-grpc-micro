@@ -1,0 +1,58 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  annotations:
+    gateway.networking.k8s.io/generator: ingress2gateway-0.4.0
+    cert-manager.io/cluster-issuer: selfsigned
+  creationTimestamp: null
+  name: kmgm-dev-gateway
+  namespace: dev
+spec:
+  gatewayClassName: eg
+  listeners:
+    # Listener Set
+    - name: poc11-lead-ovng-dev-myovcloud-com-http
+      hostname: "poc11-lead.ovng.dev.myovcloud.com"
+      port: 80
+      protocol: HTTP
+    - hostname: poc11-lead.ovng.dev.myovcloud.com
+      name: poc11-lead-ovng-dev-myovcloud-com-https
+      port: 443
+      protocol: HTTPS
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: poc11-lead-ingress-tls
+
+    - hostname: poc11-m1.ovng.dev.myovcloud.com
+      name: poc11-m1-ovng-dev-myovcloud-com-http
+      port: 80
+      protocol: HTTP
+    - hostname: poc11-m1.ovng.dev.myovcloud.com
+      name: poc11-m1-ovng-dev-myovcloud-com-https
+      port: 443
+      protocol: HTTPS
+      tls:
+        certificateRefs:
+          - kind: Secret
+            name: poc11-m1-ingress-tls
+
+  infrastructure:
+    parametersRef:
+      group: gateway.envoyproxy.io
+      kind: EnvoyProxy
+      name: custom-proxy-config
+
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyProxy
+metadata:
+  name: custom-proxy-config
+  namespace: dev
+spec:
+  provider:
+    type: Kubernetes
+    kubernetes:
+      envoyService:
+        type: NodePort

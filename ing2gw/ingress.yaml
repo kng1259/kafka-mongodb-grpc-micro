@@ -1,0 +1,55 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    # cert-manager.io/cluster-issuer: selfsigned
+    # no support
+    # nginx.ingress.kubernetes.io/configuration-snippet: |
+    #   if ($geoip2_city_country_code ~ "^(CU|IR|SD|SY|KP|RU|BY)$") {
+    #     return 403;
+    #   }
+
+    # no support
+    nginx.ingress.kubernetes.io/proxy-body-size: 20m
+    nginx.ingress.kubernetes.io/proxy-buffering: "off"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "5"
+    nginx.ingress.kubernetes.io/proxy-next-upstream:
+      error timeout http_502 http_503
+      http_504 non_idempotent
+    nginx.ingress.kubernetes.io/proxy-next-upstream-timeout: "0"
+    nginx.ingress.kubernetes.io/proxy-next-upstream-tries: "3"
+
+    # supported
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+  name: backend
+  # namespace: fleet
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: poc11-lead.ovng.dev.myovcloud.com
+      http:
+        paths:
+          - backend:
+              service:
+                name: kmgm-dev-producer-service
+                port:
+                  number: 8080
+            path: /api/v1/products
+            pathType: Prefix
+    - host: poc11-m1.ovng.dev.myovcloud.com
+      http:
+        paths:
+          - backend:
+              service:
+                name: kmgm-dev-producer-test-service
+                port:
+                  number: 8080
+            path: /api/v1alpha1/products-test
+            pathType: Prefix
+  tls:
+    - hosts:
+        - poc11-lead.ovng.dev.myovcloud.com
+      secretName: poc11-lead-ingress-tls
+    - hosts:
+        - poc11-m1.ovng.dev.myovcloud.com
+      secretName: poc11-m1-ingress-tls

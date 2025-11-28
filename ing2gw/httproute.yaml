@@ -1,0 +1,69 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  annotations:
+    gateway.networking.k8s.io/generator: ingress2gateway-0.4.0
+  creationTimestamp: null
+  namespace: dev
+  name: backend-poc11-lead-ovng-dev-myovcloud-com
+spec:
+  hostnames:
+    - poc11-lead.ovng.dev.myovcloud.com
+  parentRefs:
+    - name: kmgm-dev-gateway
+  rules:
+    - backendRefs:
+        - name: kmgm-dev-producer-service
+          port: 8080
+      matches:
+        - path:
+            type: PathPrefix
+            value: /api/v1/products
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: /products
+      timeouts:
+        request: 5s
+        backendRequest: 5s
+status:
+  parents: []
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  annotations:
+    gateway.networking.k8s.io/generator: ingress2gateway-0.4.0
+  creationTimestamp: null
+  namespace: dev
+  name: backend-poc11-m1-ovng-dev-myovcloud-com
+spec:
+  hostnames:
+    - poc11-m1.ovng.dev.myovcloud.com
+  parentRefs:
+    - name: kmgm-dev-gateway
+  rules:
+    - backendRefs:
+        - name: kmgm-dev-producer-test-service
+          port: 8080
+      matches:
+        - path:
+            type: PathPrefix
+            value: /api/v1alpha1/products-test
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: /products-test
+
+      timeouts:
+        request: 15s
+        backendRequest: 15s
+      # retry:
+      #   attempts: 3
+      #   backoff: 5s
+status:
+  parents: []

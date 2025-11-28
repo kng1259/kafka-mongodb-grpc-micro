@@ -1,0 +1,91 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  annotations:
+    gateway.networking.k8s.io/generator: ingress2gateway-0.4.0
+  creationTimestamp: null
+  name: nginx
+spec:
+  gatewayClassName: nginx
+  listeners:
+    - hostname: poc11-lead.ovng.dev.myovcloud.com
+      name: poc11-lead-ovng-dev-myovcloud-com-http
+      port: 80
+      protocol: HTTP
+    - hostname: poc11-lead.ovng.dev.myovcloud.com
+      name: poc11-lead-ovng-dev-myovcloud-com-https
+      port: 443
+      protocol: HTTPS
+      tls:
+        certificateRefs:
+          - group: null
+            kind: null
+            name: poc11-lead-ingress-tls
+          - group: null
+            kind: null
+            name: poc11-m1-ingress-tls
+
+    - hostname: poc11-m1.ovng.dev.myovcloud.com
+      name: poc11-m1-ovng-dev-myovcloud-com-http
+      port: 80
+      protocol: HTTP
+    - hostname: poc11-m1.ovng.dev.myovcloud.com
+      name: poc11-m1-ovng-dev-myovcloud-com-https
+      port: 443
+      protocol: HTTPS
+      tls:
+        certificateRefs:
+          - group: null
+            kind: null
+            name: poc11-lead-ingress-tls
+          - group: null
+            kind: null
+            name: poc11-m1-ingress-tls
+status: {}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  annotations:
+    gateway.networking.k8s.io/generator: ingress2gateway-0.4.0
+  creationTimestamp: null
+  name: backend-poc11-lead-ovng-dev-myovcloud-com
+spec:
+  hostnames:
+    - poc11-lead.ovng.dev.myovcloud.com
+  parentRefs:
+    - name: nginx
+  rules:
+    - backendRefs:
+        - name: kmgm-dev-producer-service
+          port: 8080
+      matches:
+        - path:
+            type: PathPrefix
+            value: /api/v1/products
+status:
+  parents: []
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  annotations:
+    gateway.networking.k8s.io/generator: ingress2gateway-0.4.0
+  creationTimestamp: null
+  name: backend-poc11-m1-ovng-dev-myovcloud-com
+  namespace: temp-ing-test
+spec:
+  hostnames:
+    - poc11-m1.ovng.dev.myovcloud.com
+  parentRefs:
+    - name: nginx
+  rules:
+    - backendRefs:
+        - name: kmgm-dev-producer-test-service
+          port: 8080
+      matches:
+        - path:
+            type: PathPrefix
+            value: /api/v1alpha1/products-test
+status:
+  parents: []

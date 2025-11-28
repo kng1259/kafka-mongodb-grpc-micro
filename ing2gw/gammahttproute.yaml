@@ -1,0 +1,21 @@
+---
+# Source: kmgm-app/templates/gammahttproute.yaml
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: kmgm-dev-to-consumer-route
+  namespace: dev
+spec:
+  parentRefs:
+  - kind: Service
+    group: ""
+    name: kmgm-dev-consumer-service
+    port: 9080
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /proto.ProductService
+    backendRefs:
+    - name: kmgm-dev-consumer-service
+      port: 9080

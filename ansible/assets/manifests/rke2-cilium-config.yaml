@@ -27,7 +27,7 @@ spec:
       enabled: true
       enableAppProtocol: true
       hostNetwork:
-        enabled: true
+        enabled: false
 
     # Transparent Encryption
     encryption: 
@@ -77,7 +77,7 @@ spec:
           - http
           - kafka
         serviceMonitor:
-          enabled: true
+          enabled: false
         dashboards:
           enabled: true
 
